@@ -19,7 +19,6 @@ public class Updates implements Iterable<Update>{
 		return ok;
 	}
 
-	@JsonProperty("ok")
 	public void setOk(boolean ok) {
 		this.ok = ok;
 	}
@@ -29,7 +28,6 @@ public class Updates implements Iterable<Update>{
 		return result;
 	}
 
-	@JsonProperty("result")
 	public void setResult(Update[] result) {
 		this.result = result;
 	}

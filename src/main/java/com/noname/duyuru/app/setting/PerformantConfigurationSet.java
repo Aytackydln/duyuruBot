@@ -8,18 +8,18 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
-public class PerformantConfigurationSet implements ConfigurationSet{
-	private final static Logger LOGGER = LogManager.getLogger(PerformantConfigurationSet.class);
-	private final ConfigurationRepository configurationRepository;
+public class PerformantConfigurationSet implements ConfigurationSet {
+    private static final Logger LOGGER = LogManager.getLogger(PerformantConfigurationSet.class);
+    private final ConfigurationRepository configurationRepository;
 
-	private boolean announcementCheckEnabled=true;
-	private String hookToken;
-	private String certificate;
-	private boolean webhookEnabled;
+    private boolean announcementCheckEnabled = true;
+    private String hookToken;
+    private String certificate;
+    private boolean webhookEnabled;
 
-	private final String botToken;
-	private final long masterChatId;
-	private final User master;
+    private final String botToken;
+    private final long masterChatId;
+    private final User master;
 	private final String defaultLanguage;
 	private String webHookUrl;
 	private boolean cleaningEnabled;

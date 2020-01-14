@@ -1,23 +1,14 @@
 package com.noname.duyuru.app.jpa.models;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
-
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Topic implements Serializable {
-	@Id
 	private String id;
 	private String baseLink;
 	private String boardAppend;
-	@Enumerated(EnumType.STRING)
 	private TopicType type;
 	//TODO subscribers ekle
 
@@ -33,49 +24,52 @@ public class Topic implements Serializable {
 		return false;
 	}
 
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 
-	@Override
-	public String toString() {
-		return id;
-	}
+    @Override
+    public String toString() {
+        return id;
+    }
 
-	public String getBoardAppend() {
-		return boardAppend;
-	}
+    @Id
+    public final String getId() {
+        return id;
+    }
 
-	public String getBaseLink() {
-		return baseLink;
-	}
+    public final void setId(String id) {
+        this.id = id;
+    }
 
-	public void setBaseLink(String baseLink) {
-		this.baseLink = baseLink;
-	}
+    public String getBaseLink() {
+        return baseLink;
+    }
 
-	public void setBoardAppend(String boardAppend) {
-		this.boardAppend = boardAppend;
-	}
+    public void setBaseLink(String baseLink) {
+        this.baseLink = baseLink;
+    }
 
-	public final String getId() {
-		return id;
-	}
+    public String getBoardAppend() {
+        return boardAppend;
+    }
 
-	public final void setId(String id) {
-		this.id = id;
-	}
+    public void setBoardAppend(String boardAppend) {
+        this.boardAppend = boardAppend;
+    }
 
-	public final String getAnnouncementLink() {
-		return getBaseLink() + getBoardAppend();
-	}
+    @Enumerated(EnumType.STRING)
+    public TopicType getType() {
+        return type;
+    }
 
-	public void setType(TopicType type) {
-		this.type = type;
-	}
+    public void setType(TopicType type) {
+        this.type = type;
+    }
 
-	public TopicType getType() {
-		return type;
-	}
+    @Transient
+    public final String getAnnouncementLink() {
+        return getBaseLink() + getBoardAppend();
+    }
 }

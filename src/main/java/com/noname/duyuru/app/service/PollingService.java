@@ -1,9 +1,13 @@
 package com.noname.duyuru.app.service;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
+import com.noname.duyuru.app.jpa.models.User;
+import com.noname.duyuru.app.json.models.Update;
+import com.noname.duyuru.app.json.models.Updates;
+import com.noname.duyuru.app.mvc.message.DangerMessage;
+import com.noname.duyuru.app.mvc.message.IViewMessage;
+import com.noname.duyuru.app.mvc.message.SuccessMessage;
+import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
+import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
@@ -19,14 +23,9 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.noname.duyuru.app.jpa.models.User;
-import com.noname.duyuru.app.json.models.Update;
-import com.noname.duyuru.app.json.models.Updates;
-import com.noname.duyuru.app.mvc.message.DangerMessage;
-import com.noname.duyuru.app.mvc.message.IViewMessage;
-import com.noname.duyuru.app.mvc.message.SuccessMessage;
-import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
-import com.noname.duyuru.app.setting.ConfigurationSet;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 @Service
 public class PollingService implements DisposableBean {
@@ -128,11 +127,11 @@ public class PollingService implements DisposableBean {
 		final Set<User> apologyList = new HashSet<>();
 		final Updates invalidUpdates = getUpdates();
 		for (final Update invalidUpdate : invalidUpdates) {
-			final User user = new User();
-			user.setId(invalidUpdate.getMessage().chat.getId());
-			apologyList.add(user);
-			lastUpdate = invalidUpdate.getUpdateId();
-		}
+            final User user = new User(); //TODO refactor
+            user.setId(invalidUpdate.getMessage().chat.getId());
+            apologyList.add(user);
+            lastUpdate = invalidUpdate.getUpdateId();
+        }
 		lastUpdate++;
 
 		for (final User user : apologyList) {

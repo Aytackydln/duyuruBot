@@ -9,8 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import java.io.IOException;
-
 @Configuration
 @EnableScheduling
 public class ScheduleConfiguration {
@@ -42,10 +40,10 @@ public class ScheduleConfiguration {
 		}
 	}
 
-	@Scheduled(cron="0 0 5 * * ?")
-	public final void dailyUpdate() throws IOException{
-		topicUpdater.updateTopics();
-		if(configurationSet.isCleaningEnabled())
-			announcementService.clearAnnouncements();
-	}
+	@Scheduled(cron = "0 0 5 * * ?")
+    public final void dailyUpdate() {
+        topicUpdater.updateTopics();
+        if (configurationSet.isCleaningEnabled())
+            announcementService.clearAnnouncements();
+    }
 }

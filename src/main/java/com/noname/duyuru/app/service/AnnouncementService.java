@@ -1,7 +1,9 @@
 package com.noname.duyuru.app.service;
 
 import com.noname.duyuru.app.jpa.models.*;
-import com.noname.duyuru.app.jpa.repositories.*;
+import com.noname.duyuru.app.jpa.repositories.AnnouncementRepository;
+import com.noname.duyuru.app.jpa.repositories.SubscriptionRepository;
+import com.noname.duyuru.app.jpa.repositories.TopicRepository;
 import com.noname.duyuru.app.mvc.message.IViewMessage;
 import com.noname.duyuru.app.mvc.message.SuccessMessage;
 import org.apache.logging.log4j.LogManager;
@@ -25,53 +27,50 @@ public class AnnouncementService {
 	private static final Logger LOGGER = LogManager.getLogger(AnnouncementService.class);
 
 	private final SubscriptionRepository subscriptionRepository;
-	private final DepartmentRepository departmentRepository;
 	private final AnnouncementRepository announcementRepository;
 	private final MessageSender messageSender;
 	private final TopicRepository topicRepository;
 
-	public AnnouncementService(final SubscriptionRepository subscriptionRepository,
-			final DepartmentRepository departmentRepository, final AnnouncementRepository announcementRepository,
-			final MessageSender messageSender, final TopicRepository topicRepository) {
+	public AnnouncementService(SubscriptionRepository subscriptionRepository, AnnouncementRepository announcementRepository, MessageSender messageSender, TopicRepository topicRepository) {
 		this.subscriptionRepository = subscriptionRepository;
-		this.departmentRepository = departmentRepository;
 		this.announcementRepository = announcementRepository;
 		this.messageSender = messageSender;
-		this.topicRepository=topicRepository;
+		this.topicRepository = topicRepository;
 	}
 
 	public Page<Announcement> getAnnouncements(Pageable page) {
 		return announcementRepository.findAll(page);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public Page<User> getUsersWithSubscriptions(Pageable pageable) {
-		Page<User> list = subscriptionRepository.findDistinctUsers(pageable);
-		for (User u : list)
+		final Page<User> usersWithSubscriptions = subscriptionRepository.getUsersWithSubscriptions(pageable);
+		for (User u : usersWithSubscriptions) {
 			u.getSubscriptions().size();
-		return list;
+		}
+		return usersWithSubscriptions;
 	}
 
 	public void checkNewAnnouncements() {
 		final List<Topic> topics = subscriptionRepository.findDistinctTopics();
 		for (final Topic topic : topics) {
-			LOGGER.debug("Checking " + topic.getId());
+			LOGGER.debug("Checking {}", topic.getId());
 			try {
 				switch (topic.getType()) {
-				case CENG_CLASS:
-					classCheck(topic);
-					break;
-				case MF:
-					mfCheck(topic);
-					break;
-				case CENG:
-					//logger.error("department: "+topic.getId()+" exist in topic table");
+					case CENG_CLASS:
+						classCheck(topic);
+						break;
+					case MF:
+						mfCheck(topic);
+						break;
+					case CENG:
+						//logger.error("department: "+topic.getId()+" exist in topic table");
 					//TODO
 					departmentCheck(topic);
 					break;
 				}
 			} catch (final ResourceAccessException | IOException e) {
-				LOGGER.error("could not access topic: " + topic.getId() + "(" + e.getClass().getName() + ")");
+				LOGGER.error("could not access topic: {}({})", topic.getId(), e.getClass().getName());
 			}
 		}
 	}
@@ -99,20 +98,19 @@ public class AnnouncementService {
 					announcementRepository.deleteAll(savedAnnouncements);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
 
 		}
-		LOGGER.info("Cleared annoucements; "+sb.toString());
+		LOGGER.info("Cleared announcements; {}", sb.toString());
 		return new SuccessMessage(sb.toString());
 	}
 
-	private void mfCheck(final Topic topic) throws IOException{
-		final Document doc=Jsoup.connect(topic.getAnnouncementLink()).get();
-		final Elements links=doc.select("#block-system-main tbody a");
-		LOGGER.debug(links.size()+" links are going to be checked");
+	private void mfCheck(final Topic topic) throws IOException {
+		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
+		final Elements links = doc.select("#block-system-main tbody a");
+		LOGGER.debug("{} links are going to be checked", links.size());
 		processLinks(topic, links);
-		;
 	}
 
 	//TODO remove
@@ -121,16 +119,15 @@ public class AnnouncementService {
 		final Elements rows = doc.select("#ContentPlaceHolder1_GridView1 tr");
 		rows.last().empty();
 		final Elements links = rows.select("a");
-		LOGGER.debug(links.size() + " links are going to be checked");
+		LOGGER.debug("{} links are going to be checked", links.size());
 		processLinks(topic, links);
 	}
 
-	private void classCheck(final Topic topic) throws IOException{
-		final Document doc=Jsoup.connect(topic.getAnnouncementLink()).get();
-		final Elements links=doc.select("div#ContentPlaceHolder1_TreeView1>div a");
-		LOGGER.debug(links.size()+" links are going to be checked");
+	private void classCheck(final Topic topic) throws IOException {
+		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
+		final Elements links = doc.select("div#ContentPlaceHolder1_TreeView1>div a");
+		LOGGER.debug("{} links are going to be checked", links.size());
 		processLinks(topic, links);
-		;
 	}
 
 	private void processLinks(final Topic topic, final Elements links) {
@@ -143,7 +140,7 @@ public class AnnouncementService {
 				final AnnouncementKey key = announcement.getId();
 				if (!announcementRepository.existsById(key)) {
 					announcementRepository.save(announcement);
-					notifySubscribers(topic, announcement);
+					notifySubscribers(announcement);
 				}
 			} catch (Exception e) {
 				LOGGER.error(e);
@@ -159,8 +156,8 @@ public class AnnouncementService {
 		return announcement;
 	}
 
-	private void notifySubscribers(final Topic topic, final Announcement announcement) {
-		final List<Subscription> subscriptions = subscriptionRepository.findAllByTopic(topic);
+	private void notifySubscribers(final Announcement announcement) {
+		final List<Subscription> subscriptions = subscriptionRepository.findAllByTopic(announcement.getTopic());
 		for (final Subscription subscription : subscriptions) {
 			messageSender.sendMessage(subscription.getUser(), announcement.toString());
 		}

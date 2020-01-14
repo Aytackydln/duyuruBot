@@ -1,5 +1,6 @@
 package com.noname.duyuru.app.jpa.models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -8,16 +9,11 @@ import java.util.List;
 
 @Entity
 public class User implements Serializable{
-	@Id
 	private long id;
-	@Column(name="name")
 	private String firstName;
-	@Column(name = "last_name")
 	private String lastName;
 	private String username;
-	@Column(name="language")
 	private String languageCode;
-	@OneToMany(mappedBy="user", cascade={CascadeType.PERSIST})
 	private List<Subscription> subscriptions;
 
 	@Override
@@ -28,75 +24,80 @@ public class User implements Serializable{
 			if(obj instanceof User){
 				final User otherUser=((User) obj);
 				return id==otherUser.id;
-			}
-		}
-		return false;
-	}
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public int hashCode(){
-		return ((int) id);
-	}
+    @Override
+    public int hashCode() {
+        return ((int) id);
+    }
 
-	@JsonProperty("language_code")
-	public String getLanguage(){
-		return languageCode;
-	}
+    @Id
+    @JsonAlias("id")
+    public long getId() {
+        return id;
+    }
 
-	@JsonProperty("language_code")
-	public void setLanguage(String language){
-		this.languageCode=language;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	@JsonProperty("first_name")
-	public String getFirstName(){
-		return firstName;
-	}
+    @Column(name = "name")
+    @JsonAlias("first_name")
+    public String getFirstName() {
+        return firstName;
+    }
 
-	@JsonProperty("first_name")
-	public void setName(String firstName){
-		this.firstName=firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	@JsonProperty("last_name")
-	public String getLastName(){
-		return lastName;
-	}
+    public void setName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	@JsonProperty("last_name")
-	public void setLastName(String lastName){
-		this.lastName=lastName;
-	}
+    @Column(name = "last_name")
+    @JsonAlias("last_name")
+    public String getLastName() {
+        return lastName;
+    }
 
-	public String getFullName(){
-		return getFirstName()+" "+getLastName();
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	@JsonProperty("username")
-	public String getUsername(){
-		return username;
-	}
+    @Transient
+    public String getFullName() {
+        return getFirstName() + " " + getLastName();
+    }
 
-	@JsonProperty("username")
-	public void setUsername(String username){
-		this.username=username;
-	}
+    @JsonProperty("username")
+    public String getUsername() {
+        return username;
+    }
 
-	@JsonProperty("id")
-	public long getId(){
-		return id;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	@JsonProperty("id")
-	public void setId(long id){
-		this.id=id;
-	}
+    @Column(name = "language")
+    @JsonAlias("language_code")
+    public String getLanguage() {
+        return languageCode;
+    }
 
-	public void setSubscriptions(List<Subscription> subscriptions){
-		this.subscriptions=subscriptions;
-	}
+    public void setLanguage(String language) {
+        this.languageCode = language;
+    }
 
-	public List<Subscription> getSubscriptions(){
-		return subscriptions;
-	}
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST})
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(List<Subscription> subscriptions) {
+        this.subscriptions = subscriptions;
+    }
 }

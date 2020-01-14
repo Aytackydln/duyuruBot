@@ -24,7 +24,6 @@ public class KeyboardItem{
 		return text;
 	}
 
-	@JsonProperty("text")
 	public void setText(String text){
 		this.text=text;
 	}
@@ -34,7 +33,6 @@ public class KeyboardItem{
 		return callbackData;
 	}
 
-	@JsonProperty("callback_data")
 	public void setCallbackData(String callbackData){
 		this.callbackData=callbackData;
 	}

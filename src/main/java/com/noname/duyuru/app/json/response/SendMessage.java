@@ -1,13 +1,12 @@
 package com.noname.duyuru.app.json.response;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.web.client.HttpClientErrorException;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.noname.duyuru.app.json.models.Keyboard;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.web.client.HttpClientErrorException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SendMessage implements JsonResponseEntity {
@@ -81,12 +80,12 @@ public class SendMessage implements JsonResponseEntity {
 	@Override
 	public JsonResponseEntity onError(HttpClientErrorException e) {
 		switch (e.getRawStatusCode()) {
-		case 403:
-			LOGGER.info("User " + chatId + " is disabled. Subscriptions should be deleted.\n"+e.getResponseBodyAsString());
-			//TODO sublarını sil
-			return null;
-		default:
-			return this;
-		}
+            case 403:
+                LOGGER.info("User {} is disabled. Subscriptions should be deleted.\n{}", chatId, e.getResponseBodyAsString());
+                //TODO sublarını sil
+                return null;
+            default:
+                return this;
+        }
 	}
 }

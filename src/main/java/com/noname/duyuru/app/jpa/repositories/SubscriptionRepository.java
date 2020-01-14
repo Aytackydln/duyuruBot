@@ -5,7 +5,6 @@ import com.noname.duyuru.app.jpa.models.Topic;
 import com.noname.duyuru.app.jpa.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -20,7 +19,7 @@ public interface SubscriptionRepository extends CrudRepository<Subscription, Top
 	List<Topic> findDistinctTopics();
 
 	@Query("select distinct s.user from Subscription s")
-	Page<User> findDistinctUsers(Pageable pageable);
+    Page<User> getUsersWithSubscriptions(Pageable pageable);
 
 	@Query("select s.topic from Subscription s where s.user = :user")
 	List<Topic> findUserTopics(User user);

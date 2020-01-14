@@ -33,7 +33,6 @@ public class ConfigurationController {
 		ModelAndView mv = new ModelAndView("index");
 		mv.addObject("configuration", configurationSet);
 		mv.addObject("versionKeeper", versionKeeper);
-		messageBox.addInfo("Hello!");
 		return mv;
 	}
 

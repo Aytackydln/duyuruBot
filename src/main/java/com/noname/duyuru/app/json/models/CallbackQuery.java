@@ -48,7 +48,6 @@ public class CallbackQuery{
 		return inlineMessageId;
 	}
 
-	@JsonProperty("inline_message_id")
 	public void setInlineMessageId(String inlineMessageId) {
 		this.inlineMessageId = inlineMessageId;
 	}

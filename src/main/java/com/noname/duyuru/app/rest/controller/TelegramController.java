@@ -1,5 +1,9 @@
 package com.noname.duyuru.app.rest.controller;
 
+import com.noname.duyuru.app.json.models.Update;
+import com.noname.duyuru.app.json.response.JsonResponseEntity;
+import com.noname.duyuru.app.service.CommandProcessor;
+import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -8,11 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.noname.duyuru.app.json.models.Update;
-import com.noname.duyuru.app.json.response.JsonResponseEntity;
-import com.noname.duyuru.app.service.CommandProcessor;
-import com.noname.duyuru.app.setting.ConfigurationSet;
 
 @RestController
 public class TelegramController {
@@ -33,9 +32,9 @@ public class TelegramController {
 			if (token.equals(configurationSet.getWebhookToken())) {
 				final JsonResponseEntity result = commandProcessor.processUpdate(update);
 				return new ResponseEntity<>(result, HttpStatus.OK);
-			} else{
-				LOGGER.info("received invalid webhook connection on:\n" + token);
-				return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+			} else {
+				LOGGER.info("received invalid webhook connection on: {}", token);
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 			}
 		}catch (Exception e){
 			LOGGER.error(e);

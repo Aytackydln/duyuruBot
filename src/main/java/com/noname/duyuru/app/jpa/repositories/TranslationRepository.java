@@ -1,7 +1,7 @@
 package com.noname.duyuru.app.jpa.repositories;
 
 import com.noname.duyuru.app.jpa.models.Translation;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.noname.duyuru.app.jpa.models.TranslationKey;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TranslationRepository extends CrudRepository<Translation,String> {
-	Translation getByLanguageAndSentence(String language,String sentence);
+public interface TranslationRepository extends CrudRepository<Translation, TranslationKey> {
+    Translation getByLanguageAndSentence(String language, String sentence);
 
-	@Query("select distinct t.language from Translation t")
-	List<String> getLanguages();
+    @Query("select distinct t.language from Translation t")
+    List<String> getLanguages();
 
-	@Query("select distinct t.sentence from Translation t")
-	List<String> getSentences();
+    @Query("select distinct t.sentence from Translation t")
+    List<String> getSentences();
 }

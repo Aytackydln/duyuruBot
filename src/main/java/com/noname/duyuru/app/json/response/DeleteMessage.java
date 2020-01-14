@@ -1,11 +1,10 @@
 package com.noname.duyuru.app.json.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DeleteMessage implements JsonResponseEntity {
 	private static final Logger LOGGER = LogManager.getLogger(DeleteMessage.class);
@@ -44,15 +43,13 @@ public class DeleteMessage implements JsonResponseEntity {
 
 	@Override
 	public JsonResponseEntity onError(HttpClientErrorException e) {
-		if (!errorProcessed){
-			LOGGER.error(
-					"Error while sending delete message response: \n chatId:" + chatId + "messageId: " + messageId);
-			LOGGER.error(e.getResponseBodyAsString());
-		}else {
-			LOGGER.trace(
-					"Error while sending delete message response: \n chatId:" + chatId + "messageId: " + messageId);
-			LOGGER.trace(e.getResponseBodyAsString());
-		}
+		if (!errorProcessed) {
+            LOGGER.error("Error while sending delete message response: \n chatId: {} messageId: {}", chatId, messageId);
+            LOGGER.error(e.getResponseBodyAsString());
+        }else {
+            LOGGER.trace("Error while sending delete message response: \n chatId: {} messageId: {}", chatId, messageId);
+            LOGGER.trace(e.getResponseBodyAsString());
+        }
 
 		return null;
 	}

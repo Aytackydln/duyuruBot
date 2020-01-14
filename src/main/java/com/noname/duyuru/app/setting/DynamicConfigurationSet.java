@@ -9,17 +9,17 @@ import org.apache.logging.log4j.Logger;
 import java.util.Optional;
 
 public class DynamicConfigurationSet implements ConfigurationSet {
-	private final static Logger LOGGER = LogManager.getLogger(DynamicConfigurationSet.class);
+    private static final Logger LOGGER = LogManager.getLogger(DynamicConfigurationSet.class);
 
-	private boolean announcementCheckEnabled=true;
-	private String hookToken;
-	private String certificate;
-	private boolean webhookEnabled;
+    private boolean announcementCheckEnabled = true;
+    private String hookToken;
+    private String certificate;
+    private boolean webhookEnabled;
 
-	private String botToken;
-	private long masterChatId;
-	private User master;
-	private String defaultLanguage;
+    private String botToken;
+    private long masterChatId;
+    private User master;
+    private String defaultLanguage;
 	private String webHookUrl;
 	private boolean cleaningEnabled;
 

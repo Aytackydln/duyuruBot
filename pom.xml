@@ -1,34 +1,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.8.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>fit.gjae.xkayad00</groupId>
-	<artifactId>duyuru</artifactId>
-	<packaging>war</packaging>
-	<version>1.5.3</version>
-	<name>Duyuru botu</name>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.2.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>fit.gjae.xkayad00</groupId>
+    <artifactId>duyuru</artifactId>
+    <packaging>war</packaging>
+    <version>1.6.0</version>
+    <name>Duyuru botu</name>
 
-	<properties>
-		<servlet-api.version>4.0.1</servlet-api.version>
-		<spring.version>5.1.6.RELEASE</spring.version>
-		<spring.security.version>5.1.5.RELEASE</spring.security.version>
-		<hibernate.version>5.4.2.Final</hibernate.version>
-		<jpa.version>2.1.6.RELEASE</jpa.version>
-		<mysql.connector.version>8.0.15</mysql.connector.version>
-		<jstl.version>1.2</jstl.version>
-		<jaxb.version>2.2.11</jaxb.version>
-		<jsoup.version>1.12.1</jsoup.version>
-	</properties>
+    <properties>
+        <hibernate.version>5.4.2.Final</hibernate.version>
+        <jsoup.version>1.12.1</jsoup.version>
+    </properties>
 
-
-	<build>
-		<finalName>duyuru</finalName>
-		<plugins>
+    <build>
+        <finalName>duyuru</finalName>
+        <plugins>
 			<plugin>
 				<groupId>org.hibernate.orm.tooling</groupId>
 				<artifactId>hibernate-enhance-maven-plugin</artifactId>

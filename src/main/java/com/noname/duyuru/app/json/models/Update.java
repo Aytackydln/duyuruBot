@@ -15,7 +15,6 @@ public class Update{
 		return updateId;
 	}
 
-	@JsonProperty("update_id")
 	public void setUpdateId(int updateId){
 		this.updateId=updateId;
 	}
@@ -25,7 +24,6 @@ public class Update{
 		return message;
 	}
 
-	@JsonProperty("message")
 	public void setMessage(Message message){
 		this.message=message;
 	}
@@ -35,7 +33,6 @@ public class Update{
 		return callbackQuery;
 	}
 
-	@JsonProperty("callback_query")
 	public void setCallbackQuery(CallbackQuery callbackQuery){
 		this.callbackQuery=callbackQuery;
 	}

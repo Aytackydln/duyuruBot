@@ -1,13 +1,5 @@
 package com.noname.duyuru.app.service;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
-import org.springframework.stereotype.Service;
-
 import com.noname.duyuru.app.jpa.models.Message;
 import com.noname.duyuru.app.jpa.models.Subscription;
 import com.noname.duyuru.app.jpa.models.Topic;
@@ -15,14 +7,17 @@ import com.noname.duyuru.app.jpa.models.User;
 import com.noname.duyuru.app.jpa.repositories.MessageRepository;
 import com.noname.duyuru.app.jpa.repositories.SubscriptionRepository;
 import com.noname.duyuru.app.jpa.repositories.TopicRepository;
-import com.noname.duyuru.app.json.models.CallbackQuery;
-import com.noname.duyuru.app.json.models.CustomKeyboard;
-import com.noname.duyuru.app.json.models.InlineKeyboard;
-import com.noname.duyuru.app.json.models.KeyboardItem;
-import com.noname.duyuru.app.json.models.Update;
+import com.noname.duyuru.app.json.models.*;
 import com.noname.duyuru.app.json.response.JsonResponseEntity;
 import com.noname.duyuru.app.json.response.SendMessage;
 import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CommandProcessor {
@@ -30,10 +25,10 @@ public class CommandProcessor {
 	private static final String SUBSCRIBE_KEYWORD = "sub";
 	private static final String UNSUBSCRIBE_KEYWORD = "unsub";
 
-	private static final String CANCEL_STRING="-";
-	private static final String CANCEL_TEXT="❌";
+	private static final String CANCEL_STRING = "-";
+	private static final String CANCEL_TEXT = "❌";
 
-	private static final String COMMAND_SEPERATOR="~~";
+	private static final String COMMAND_SEPARATOR = "~~";
 
 	private final SubscriptionRepository subscriptionRepository;
 	private final TopicRepository topicRepository;
@@ -80,17 +75,17 @@ public class CommandProcessor {
 			}
 
 			//process callback
-			final String[] commandAndParameter = data.split(COMMAND_SEPERATOR);
+			final String[] commandAndParameter = data.split(COMMAND_SEPARATOR);
 			final String command = commandAndParameter[0];
 			final String parameter = commandAndParameter[1];
 			switch (command) {
-			case SUBSCRIBE_KEYWORD:
-				return subscribe(callbackQuery, parameter);
-			case UNSUBSCRIBE_KEYWORD:
-				return unsubscribe(callbackQuery, parameter);
-			default:
-				LOGGER.error("unknown operation " + command);
-				return new SendMessage(user.getId(), translate(user, "REQUEST_ERROR") + "(unknown operation)");
+				case SUBSCRIBE_KEYWORD:
+					return subscribe(callbackQuery, parameter);
+				case UNSUBSCRIBE_KEYWORD:
+					return unsubscribe(callbackQuery, parameter);
+				default:
+					LOGGER.error("unknown operation {}", command);
+					return new SendMessage(user.getId(), translate(user, "REQUEST_ERROR") + "(unknown operation)");
 			}
 		} else {
 			message = update.getMessage();
@@ -119,7 +114,7 @@ public class CommandProcessor {
 	}
 
 	private SendMessage introduce(final User user) {
-		LOGGER.info("yeni biri geldi: " + user.getId());
+		LOGGER.info("yeni biri geldi: {}", user.getId());
 
 		//TODO dinamik yap
 		subscribe(user, "ceng");
@@ -158,7 +153,7 @@ public class CommandProcessor {
 		final InlineKeyboard inlineKeyboard = new InlineKeyboard();
 		inlineKeyboard.addRow().add(new KeyboardItem(CANCEL_TEXT, CANCEL_STRING));
 		for (Topic topic : allTopics) {
-			inlineKeyboard.addRow().add(new KeyboardItem(topic.getId(), SUBSCRIBE_KEYWORD + COMMAND_SEPERATOR + topic.getId()));
+			inlineKeyboard.addRow().add(new KeyboardItem(topic.getId(), SUBSCRIBE_KEYWORD + COMMAND_SEPARATOR + topic.getId()));
 		}
 		inlineKeyboard.addRow().add(new KeyboardItem(CANCEL_TEXT, CANCEL_STRING));
 
@@ -171,7 +166,7 @@ public class CommandProcessor {
 		final InlineKeyboard inlineKeyboard = new InlineKeyboard();
 		inlineKeyboard.addRow().add(new KeyboardItem(CANCEL_TEXT, CANCEL_STRING));
 		for (Topic topic : subscriptionList) {
-			inlineKeyboard.addRow().add(new KeyboardItem(topic.getId(), UNSUBSCRIBE_KEYWORD + COMMAND_SEPERATOR + topic.getId()));
+			inlineKeyboard.addRow().add(new KeyboardItem(topic.getId(), UNSUBSCRIBE_KEYWORD + COMMAND_SEPARATOR + topic.getId()));
 		}
 		inlineKeyboard.addRow().add(new KeyboardItem(CANCEL_TEXT, CANCEL_STRING));
 
@@ -187,7 +182,7 @@ public class CommandProcessor {
 			messageSender.send(listTopicsToSubscribe(user));
 			return new SendMessage(user.getId(), topic + " -> " + translate(user, "SUBSCRIBE_SUCCESS"));
 		} catch (JpaObjectRetrievalFailureException e) {
-			LOGGER.error("attempted to subscribe non-existing " + topic);
+			LOGGER.error("attempted to subscribe non-existing {}", topic);
 			return new SendMessage(user.getId(),
 					topic + " -> " + translate(user, translate(user, "TOPIC_NOT_EXISTS")));
 		} catch (Exception e) {
