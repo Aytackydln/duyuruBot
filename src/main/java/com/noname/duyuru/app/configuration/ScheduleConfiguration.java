@@ -33,8 +33,7 @@ public class ScheduleConfiguration {
 		return scheduledExecutorService;
 	}
 
-
-    @Scheduled(cron = "0 0/4 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
 	public final void checkAnnouncements() {
 		if (configurationSet.isAnnouncementCheckEnabled()) {
 			announcementService.checkNewAnnouncements();

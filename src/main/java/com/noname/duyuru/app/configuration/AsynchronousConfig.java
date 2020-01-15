@@ -13,10 +13,9 @@ public class AsynchronousConfig {
     @Bean(name = "executor", destroyMethod = "shutdown")
     public ThreadPoolTaskExecutor taskExecutor() {
         final ThreadPoolTaskExecutor scheduledExecutorService = new ThreadPoolTaskExecutor();
-        scheduledExecutorService.setCorePoolSize(2);
-        scheduledExecutorService.setMaxPoolSize(6);
+        scheduledExecutorService.setCorePoolSize(3);
+        scheduledExecutorService.setMaxPoolSize(8);
         scheduledExecutorService.setKeepAliveSeconds(15);
-        scheduledExecutorService.setAllowCoreThreadTimeOut(true);
         scheduledExecutorService.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         scheduledExecutorService.setWaitForTasksToCompleteOnShutdown(true);
 

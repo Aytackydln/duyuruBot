@@ -106,7 +106,7 @@ public class PollingService implements DisposableBean {
 				LOGGER.info("stopping polling thread");
 				throw new InterruptedException();
 			}
-			Thread.sleep(4000);
+			Thread.sleep(3500);
 		}
 	};
 
