@@ -5,7 +5,7 @@
 <t:template>
     <jsp:attribute name="title">Configuration page</jsp:attribute>
     <jsp:body>
-        <table class="col-sm-9 col-xs-12 table table-striped table-bordered">
+        <table class="table table-striped table-bordered">
             <thead>
             <tr>
                 <th colspan="2">Current settings</th>

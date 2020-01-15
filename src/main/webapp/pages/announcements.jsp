@@ -4,17 +4,19 @@
 <t:template>
     <jsp:attribute name="title">Announcements</jsp:attribute>
     <jsp:body>
-        <div class="container-fluid panel-group">
+        <div class="container-fluid">
             <c:forEach items="${announcementList.content}" var="ann">
-                <div class="panel panel-default row">
-                    <div class="panel-heading col col-md-auto">
-                            ${ann.topic}
-                    </div>
-                    <div class="panel-body col-9 col-md col-xs-12">
-                        <a<c:if test="${!ann.link.equals(\"\")}"> href="${ann.url}"</c:if>>${ann.title}</a>
-                    </div>
-                    <div class="panel-footer col col-md-auto">
-                            ${ann.date}
+                <div class="card">
+                    <div class="card-body row">
+                        <span class="badge badge-primary col-auto">
+                                ${ann.topic}
+                        </span>
+                        <span class="col">
+                            <a<c:if test="${!ann.link.equals(\"\")}"> href="${ann.url}"</c:if>>${ann.title}</a>
+                        </span>
+                        <span class="badge badge-info col-auto">
+                                ${ann.date}
+                        </span>
                     </div>
                 </div>
             </c:forEach>
