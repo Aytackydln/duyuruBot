@@ -1,5 +1,6 @@
 package com.noname.duyuru.app.service;
 
+import com.noname.duyuru.app.jpa.models.Message;
 import com.noname.duyuru.app.jpa.models.User;
 import com.noname.duyuru.app.json.models.Update;
 import com.noname.duyuru.app.json.models.Updates;
@@ -127,11 +128,14 @@ public class PollingService implements DisposableBean {
 		final Set<User> apologyList = new HashSet<>();
 		final Updates invalidUpdates = getUpdates();
 		for (final Update invalidUpdate : invalidUpdates) {
-            final User user = new User(); //TODO refactor
-            user.setId(invalidUpdate.getMessage().chat.getId());
-            apologyList.add(user);
-            lastUpdate = invalidUpdate.getUpdateId();
-        }
+			final User user = new User(); //TODO refactor
+			final Message message = invalidUpdate.getMessage();
+			if (message != null)
+				user.setId(message.chat.getId());
+			else continue;
+			apologyList.add(user);
+			lastUpdate = invalidUpdate.getUpdateId();
+		}
 		lastUpdate++;
 
 		for (final User user : apologyList) {
@@ -140,7 +144,7 @@ public class PollingService implements DisposableBean {
 		}
 	}
 
-	public final String deleteWebhook() throws InterruptedException {
+	public String deleteWebhook() throws InterruptedException {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 

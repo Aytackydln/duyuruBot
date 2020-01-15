@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+//TODO cachable on existsById?
 public class Topic implements Serializable {
 	private String id;
 	private String baseLink;

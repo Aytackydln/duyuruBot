@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
@@ -106,6 +107,25 @@ public class AnnouncementService {
 		return new SuccessMessage(sb.toString());
 	}
 
+	@Async
+	void processLinks(final Topic topic, final Elements links) {
+		for (final Element link : links) {
+			try {
+				//TODO Announcement builder from html element
+				final Announcement announcement = buildAnnouncement(topic, link);
+				announcement.setDate(new Date());
+
+				final AnnouncementKey key = announcement.getId();
+				if (!announcementRepository.existsById(key)) {
+					announcementRepository.save(announcement);
+					notifySubscribers(announcement);
+				}
+			} catch (Exception e) {
+				LOGGER.error(e);
+			}
+		}
+	}
+
 	private void mfCheck(final Topic topic) throws IOException {
 		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
 		final Elements links = doc.select("#block-system-main tbody a");
@@ -130,24 +150,6 @@ public class AnnouncementService {
 		processLinks(topic, links);
 	}
 
-	private void processLinks(final Topic topic, final Elements links) {
-		for (final Element link : links) {
-			try {
-				//TODO Announcement builder from html element
-				final Announcement announcement = buildAnnouncement(topic, link);
-				announcement.setDate(new Date());
-
-				final AnnouncementKey key = announcement.getId();
-				if (!announcementRepository.existsById(key)) {
-					announcementRepository.save(announcement);
-					notifySubscribers(announcement);
-				}
-			} catch (Exception e) {
-				LOGGER.error(e);
-			}
-		}
-	}
-
 	private Announcement buildAnnouncement(Topic topic, Element htmlElement) {
 		final Announcement announcement = new Announcement();
 		announcement.setTitle(htmlElement.html());
@@ -157,8 +159,7 @@ public class AnnouncementService {
 	}
 
 	private void notifySubscribers(final Announcement announcement) {
-		final List<Subscription> subscriptions = subscriptionRepository.findAllByTopic(announcement.getTopic());
-		for (final Subscription subscription : subscriptions) {
+		for (Subscription subscription : subscriptionRepository.findAllByTopic(announcement.getTopic())) {
 			messageSender.sendMessage(subscription.getUser(), announcement.toString());
 		}
 	}

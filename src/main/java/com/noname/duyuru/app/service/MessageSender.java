@@ -1,27 +1,27 @@
 package com.noname.duyuru.app.service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
+import com.noname.duyuru.app.jpa.models.User;
+import com.noname.duyuru.app.json.response.DeleteMessage;
+import com.noname.duyuru.app.json.response.JsonResponseEntity;
+import com.noname.duyuru.app.json.response.SendMessage;
+import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import com.noname.duyuru.app.jpa.models.User;
-import com.noname.duyuru.app.json.response.DeleteMessage;
-import com.noname.duyuru.app.json.response.JsonResponseEntity;
-import com.noname.duyuru.app.json.response.SendMessage;
-import com.noname.duyuru.app.setting.ConfigurationSet;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 @Service
 public class MessageSender implements DisposableBean {
@@ -98,7 +98,12 @@ public class MessageSender implements DisposableBean {
 		sendMessageToMaster("I have woken up, master");
 	}
 
-	final void sendMessage(final User user, final String message) {
+	public void destroy() {
+		sendMessageToMaster("Goodbye, master...");
+		sendingThread.interrupt();
+	}
+
+	void sendMessage(final User user, final String message) {
 		final SendMessage sendMessage = new SendMessage(user.getId(), message);
 		try {
 			messageQueue.put(sendMessage);
@@ -106,31 +111,27 @@ public class MessageSender implements DisposableBean {
 		}
 	}
 
-	final void send(final JsonResponseEntity response) {
-		if (response.isLimited()) {
-			try {
-				messageQueue.put(response);
-			} catch (InterruptedException ignored) {
-			}
-		} else {
-			sendResponse(response);
-		}
-	}
-
-	public final void destroy() {
-		sendMessageToMaster("Goodbye, master...");
-		sendingThread.interrupt();
-	}
-
-	final void sendMessageToMaster(final String message) {
+	void sendMessageToMaster(final String message) {
 		sendMessage(configurationSet.getMaster(), message);
 	}
 
-	final void deleteMessage(final User user, final long messageId) {
-		sendResponse(new DeleteMessage(user.getId(), messageId));
+	void deleteMessage(final User user, final long messageId) {
+		submitResponseAsync(new DeleteMessage(user.getId(), messageId));
 	}
 
-	private void sendResponse(JsonResponseEntity responseEntity) {
+	void send(final JsonResponseEntity response) {
+		if (response.isLimited()) {
+			try {
+				messageQueue.put(response);    //TODO @Async("msgSender") li method yap
+			} catch (InterruptedException ignored) {
+			}
+		} else {
+			submitResponseAsync(response);
+		}
+	}
+
+	@Async
+	void submitResponseAsync(JsonResponseEntity responseEntity) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 

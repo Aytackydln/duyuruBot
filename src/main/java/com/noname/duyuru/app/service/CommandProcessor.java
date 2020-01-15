@@ -63,11 +63,11 @@ public class CommandProcessor {
 			message.setUser(user);
 			try {
 				messageRepository.save(message);
-			}catch (DataIntegrityViolationException e){
+			} catch (DataIntegrityViolationException e) {
 				return new SendMessage(user.getId(), translate(user, "REQUEST_ERROR"));
 			}
 
-			messageSender.deleteMessage(user, message.getMessageId());
+			messageSender.deleteMessage(user, message.getMessageId());  //TODO future ile silinip silinmediğine bak
 
 			//check cancel button
 			if (data.equals(CANCEL_STRING)) {
