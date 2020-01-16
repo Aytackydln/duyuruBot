@@ -49,16 +49,6 @@ input, textarea, select {
 	margin-bottom: 0.5rem;
 }
 
-.panel {
-	align-items: center;
-	border-color: black;
-	overflow-x: hidden;
-}
-
-.panel-heading {
-	min-width: 18em;
-}
-
 .row:before, .row:after {
 	display: none !important;
 }
@@ -69,10 +59,6 @@ input, textarea, select {
 
 .navbar-nav {
 	float: none;
-}
-
-h1, h2, h3, .panel-heading {
-	word-wrap: break-word;
 }
 
 thead {
@@ -93,6 +79,10 @@ table, .alert {
 	padding: 0.5rem;
 }
 
+.card {
+	border-color: black;
+}
+
 .card-body {
 	margin: 0;
 }
@@ -100,4 +90,5 @@ table, .alert {
 .card-body > * {
 	padding-top: 0.5rem;
 	padding-bottom: 0.5rem;
+	min-width: 15rem;
 }
