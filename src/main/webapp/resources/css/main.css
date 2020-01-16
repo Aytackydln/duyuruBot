@@ -3,9 +3,27 @@ input, textarea, select {
 	color: black;
 }
 
+.navbar-header {
+	float: none;
+}
+
+.navbar {
+	border-radius: 0;
+	margin: auto;
+	padding: 10px;
+	margin-top: 0;
+	display: block;
+}
+
 .navbar-nav > li > a {
-	padding-top: 19.5px;
-	padding-bottom: 19.5px;
+	padding-top: 1rem;
+	padding-left: 1rem !important;
+	padding-bottom: 1rem;
+}
+
+.navbar-nav > .active {
+	color: #ffffff;
+	background-color: #28415b
 }
 
 .fill {
@@ -27,12 +45,8 @@ input, textarea, select {
 }
 
 .row {
-	margin-top: 0.75rem;
-	margin-bottom: 0.75rem;
-}
-
-.navbar-header {
-	float: none;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 
 .panel {
@@ -51,14 +65,6 @@ input, textarea, select {
 
 *:before, *:after {
 	display: none !important;
-}
-
-.navbar {
-	border-radius: 0;
-	margin: auto;
-	padding: 10px;
-	margin-top: 0;
-	display: block;
 }
 
 .navbar-nav {
@@ -85,4 +91,13 @@ table, .alert {
 	font-size: 90%;
 	font-weight: normal;
 	padding: 0.5rem;
+}
+
+.card-body {
+	margin: 0;
+}
+
+.card-body > * {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
 }

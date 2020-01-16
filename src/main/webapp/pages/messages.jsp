@@ -5,18 +5,18 @@
 <t:template>
     <jsp:attribute name="title">Messages</jsp:attribute>
     <jsp:body>
-        <div class="container-fluid panel-group">
+        <div class="container-fluid">
             <c:forEach items="${messagePage.content}" var="msg">
                 <div class="card row">
                     <div class="card-body row">
-                        <span class="badge badge-success col-auto">
+                        <span class="bg-primary col-md-auto col">
                                 ${msg.user.fullName}, ${msg.user.username}
                         </span>
-                        <span class="col">
-                                ${msg.text}
-                        </span>
-                        <span class="badge badge-info col-auto">
+                        <span class="bg-info col-md-auto col">
                             <fmt:formatDate type="both" value="${msg.time.time}" pattern="dd MMM yyyy HH:mm:ss"/>
+                        </span>
+                        <span class="col-md col-12">
+                                ${msg.text}
                         </span>
                     </div>
                 </div>
