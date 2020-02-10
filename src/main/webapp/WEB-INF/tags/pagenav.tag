@@ -24,8 +24,8 @@
         <li class="page-item">
             </c:when>
             <c:otherwise>
-        <li class="disabled">
-            </c:otherwise>
+            <li class="disabled page-item">
+                </c:otherwise>
             </c:choose>
             <a class="page-link"
                href="${pageContext.request.contextPath}${requestScope['javax.servlet.forward.servlet_path']}?page=${pageable.number+1}">Next</a>
