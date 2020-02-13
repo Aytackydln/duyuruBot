@@ -1,11 +1,12 @@
 package com.noname.duyuru.app.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.noname.duyuru.app.jpa.models.Department;
+import com.noname.duyuru.app.jpa.models.Topic;
+import com.noname.duyuru.app.jpa.models.TopicType;
+import com.noname.duyuru.app.jpa.repositories.DepartmentRepository;
+import com.noname.duyuru.app.jpa.repositories.TopicRepository;
+import com.noname.duyuru.app.mvc.message.IViewMessage;
+import com.noname.duyuru.app.mvc.message.SuccessMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -14,13 +15,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import com.noname.duyuru.app.jpa.models.Department;
-import com.noname.duyuru.app.jpa.models.Topic;
-import com.noname.duyuru.app.jpa.models.TopicType;
-import com.noname.duyuru.app.jpa.repositories.DepartmentRepository;
-import com.noname.duyuru.app.jpa.repositories.TopicRepository;
-import com.noname.duyuru.app.mvc.message.IViewMessage;
-import com.noname.duyuru.app.mvc.message.SuccessMessage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TopicUpdater {
@@ -59,10 +58,10 @@ public class TopicUpdater {
 				final String courseAppend = link.attr("href");
 				final String courseId = link.html();
 
-				final Topic topicFromHtml = new Topic();
+				final Topic topicFromHtml = new Topic();    //TODO topic builder ile oluştur
 				topicFromHtml.setId(courseId);
 
-				if (!topicRepository.existsById(courseId)) { //when new topic is found
+				if (!topicRepository.existsByBoardAppend(courseAppend)) { //when new topic (by link) is found
 					topicFromHtml.setBoardAppend(courseAppend);
 					//TODO change these to department
 					topicFromHtml.setBaseLink(department.getBaseLink());
