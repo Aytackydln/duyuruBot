@@ -27,19 +27,19 @@ public class TopicUpdater {
 
 	private final TopicRepository topicRepository;
 	private final DepartmentRepository departmentRepository;
+	private final MessageSender messageSender;
 
-	public TopicUpdater(final TopicRepository topicRepository, final DepartmentRepository departmentRepository) {
+	public TopicUpdater(TopicRepository topicRepository, DepartmentRepository departmentRepository, MessageSender messageSender) {
 		this.topicRepository = topicRepository;
 		this.departmentRepository = departmentRepository;
-
-		updateTopics();
+		this.messageSender = messageSender;
 	}
 
 	public Collection<IViewMessage> updateTopics() {
-		final List<IViewMessage> result=new ArrayList<>();
-		final Iterable<Department> departments=departmentRepository.findAll();
+		final List<IViewMessage> result = new ArrayList<>();
+		final Iterable<Department> departments = departmentRepository.findAll();
 		for (final Department d : departments)
-			result.add(new SuccessMessage(d.getId()+": "+checkDepartmentClasses(d)));
+			result.add(new SuccessMessage(d.getId() + ": " + checkDepartmentClasses(d)));
 		return result;
 	}
 
@@ -48,12 +48,12 @@ public class TopicUpdater {
 			final Document doc = Jsoup.connect(department.getBaseLink() + department.getClassesUri()).get();
 			final Elements courseLinks = doc.select(department.getClassElementSelector());
 
-			int added = 0;
+			int addedCount = 0;
 
 			final List<Topic> currentCourseTopics = topicRepository.getByType(TopicType.CENG_CLASS);
 			//TODO hatada duraklama ekle
 
-			final StringBuilder addedTopicsString=new StringBuilder();
+			final StringBuilder addedTopicsString = new StringBuilder();
 			for (final Element link : courseLinks) {
 				final String courseAppend = link.attr("href");
 				final String courseId = link.html();
@@ -70,19 +70,22 @@ public class TopicUpdater {
 					topicRepository.save(topicFromHtml);
 					addedTopicsString.append(topicFromHtml.getId());
 					addedTopicsString.append(',');
-					added++;
+					addedCount++;
+
+					messageSender.sendMessageToMaster("New topic\n" + topicFromHtml);
 				} else { //when course is already in database
 					currentCourseTopics.remove(topicFromHtml); //remove the topic from the list, remaining ones will be deleted
 				}
 			}
-			LOGGER.info("Added new topics: "+addedTopicsString.toString());
+			LOGGER.info("Added new topics: " + addedTopicsString.toString());
 
 			//delete topics if they are not in the page
-			List<String> deletedTopicNames=currentCourseTopics.stream().map(Topic::getId).collect(Collectors.toList());
-			String deletedTopicsString=String.join(",", deletedTopicNames);
-			LOGGER.info("Deleting " + currentCourseTopics.size() + " topic(s): "+deletedTopicsString);
+			List<String> deletedTopicNames = currentCourseTopics.stream().map(Topic::getId).collect(Collectors.toList());
+			String deletedTopicsString = String.join(",", deletedTopicNames);
+			LOGGER.info("Deleting " + currentCourseTopics.size() + " topic(s): " + deletedTopicsString);
+			messageSender.sendMessageToMaster("Deleted topics: " + deletedTopicsString);
 			topicRepository.deleteAll(currentCourseTopics);
-			return "deleted " + currentCourseTopics.size() + "\n added " + added + " topics\n"+deletedTopicsString;
+			return "added " + addedCount + "<br> deleted " + currentCourseTopics.size() + " topics<br>New: " + addedTopicsString + "<br>Deleted: " + deletedTopicsString;
 		} catch (IOException e) {
 			LOGGER.info(department.getId()+" classes could not be loaded ("+e.getClass().getSimpleName()+")");
 			LOGGER.trace(e);
