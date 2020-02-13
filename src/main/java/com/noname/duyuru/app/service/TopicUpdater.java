@@ -83,9 +83,16 @@ public class TopicUpdater {
 			List<String> deletedTopicNames = currentCourseTopics.stream().map(Topic::getId).collect(Collectors.toList());
 			String deletedTopicsString = String.join(",", deletedTopicNames);
 			LOGGER.info("Deleting " + currentCourseTopics.size() + " topic(s): " + deletedTopicsString);
-			messageSender.sendMessageToMaster("Deleted topics: " + deletedTopicsString);
 			topicRepository.deleteAll(currentCourseTopics);
-			return "added " + addedCount + "<br> deleted " + currentCourseTopics.size() + " topics<br>New: " + addedTopicsString + "<br>Deleted: " + deletedTopicsString;
+			String output = "added " + addedCount + "<br> deleted " + currentCourseTopics.size() + " topics<br>";
+			if (addedCount > 0) {
+				output += "New: " + addedTopicsString + "<br>";
+			}
+			if (currentCourseTopics.size() > 0) {
+				output += "<br>Deleted: " + deletedTopicsString + "<br>";
+				messageSender.sendMessageToMaster("Deleted topics: " + deletedTopicsString);
+			}
+			return output;
 		} catch (IOException e) {
 			LOGGER.info(department.getId()+" classes could not be loaded ("+e.getClass().getSimpleName()+")");
 			LOGGER.trace(e);
