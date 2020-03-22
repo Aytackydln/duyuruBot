@@ -7,20 +7,23 @@ import java.io.Serializable;
 @Inheritance(strategy = InheritanceType.JOINED)
 //TODO cachable on existsById?
 public class Topic implements Serializable {
-	private String id;
-	private String baseLink;
-	private String boardAppend;
-	private TopicType type;
-	//TODO subscribers ekle
+    private String id;
+    private String baseLink;
+    private String boardAppend;
+    private TopicType type;
+    private String annSelector;
+    private String annTitleSelector;
+    private String annLinkSelector;
+    //TODO subscribers ekle
 
-	@Override
-	public boolean equals(Object obj) {
-		if (super.equals(obj)) {
-			return true;
-		}
-		if (obj instanceof Topic) {
-			final Topic otherTopic = ((Topic) obj);
-			return id.equals(otherTopic.id);
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            return true;
+        }
+        if (obj instanceof Topic) {
+            final Topic otherTopic = ((Topic) obj);
+            return id.equals(otherTopic.id);
 		}
 		return false;
 	}
@@ -67,6 +70,30 @@ public class Topic implements Serializable {
 
     public void setType(TopicType type) {
         this.type = type;
+    }
+
+    public String getAnnSelector() {
+        return annSelector;
+    }
+
+    public void setAnnSelector(String annSelector) {
+        this.annSelector = annSelector;
+    }
+
+    public String getAnnTitleSelector() {
+        return annTitleSelector;
+    }
+
+    public void setAnnTitleSelector(String annTitleSelector) {
+        this.annTitleSelector = annTitleSelector;
+    }
+
+    public String getAnnLinkSelector() {
+        return annLinkSelector;
+    }
+
+    public void setAnnLinkSelector(String annLinkSelector) {
+        this.annLinkSelector = annLinkSelector;
     }
 
     @Transient

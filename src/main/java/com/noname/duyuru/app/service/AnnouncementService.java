@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.io.IOException;
@@ -46,9 +47,9 @@ public class AnnouncementService {
 	@Transactional(readOnly = true)
 	public Page<User> getUsersWithSubscriptions(Pageable pageable) {
 		final Page<User> usersWithSubscriptions = subscriptionRepository.getUsersWithSubscriptions(pageable);
-		for (User u : usersWithSubscriptions) {
+		/*for (User u : usersWithSubscriptions) {
 			u.getSubscriptions().size();
-		}
+		}*/
 		return usersWithSubscriptions;
 	}
 
@@ -57,6 +58,7 @@ public class AnnouncementService {
 		for (final Topic topic : topics) {
 			LOGGER.debug("Checking {}", topic.getId());
 			try {
+				/*
 				switch (topic.getType()) {
 					case CENG_CLASS:
 						classCheck(topic);
@@ -70,6 +72,8 @@ public class AnnouncementService {
 					departmentCheck(topic);
 					break;
 				}
+				 */
+				checkAnnouncements(topic);
 			} catch (final ResourceAccessException | IOException e) {
 				LOGGER.error("could not access topic: {}({})", topic.getId(), e.getClass().getName());
 			}
@@ -126,6 +130,14 @@ public class AnnouncementService {
 		}
 	}
 
+	private void checkAnnouncements(final Topic topic) throws IOException {
+		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
+		final Elements links = doc.select(topic.getAnnSelector());
+		LOGGER.debug("{} links are going to be checked with general method", links.size());
+		processLinks(topic, links);
+	}
+
+	//TODO remove
 	private void mfCheck(final Topic topic) throws IOException {
 		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
 		final Elements links = doc.select("#block-system-main tbody a");
@@ -143,6 +155,7 @@ public class AnnouncementService {
 		processLinks(topic, links);
 	}
 
+	//TODO remove
 	private void classCheck(final Topic topic) throws IOException {
 		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
 		final Elements links = doc.select("div#ContentPlaceHolder1_TreeView1>div a");
@@ -152,9 +165,17 @@ public class AnnouncementService {
 
 	private Announcement buildAnnouncement(Topic topic, Element htmlElement) {
 		final Announcement announcement = new Announcement();
-		announcement.setTitle(htmlElement.html());
+		if (StringUtils.isEmpty(topic.getAnnTitleSelector())) {
+			announcement.setTitle(htmlElement.html());
+		} else {
+			announcement.setTitle(htmlElement.selectFirst(topic.getAnnTitleSelector()).html());
+		}
 		announcement.setTopic(topic);
-		announcement.setLink(htmlElement.attr("href"));
+		if (StringUtils.isEmpty(topic.getAnnLinkSelector())) {
+			announcement.setLink(htmlElement.attr("href"));
+		} else {
+			announcement.setLink(htmlElement.selectFirst(topic.getAnnLinkSelector()).attr("href"));
+		}
 		return announcement;
 	}
 
