@@ -2,7 +2,6 @@ package com.noname.duyuru.app.service;
 
 import com.noname.duyuru.app.jpa.models.Department;
 import com.noname.duyuru.app.jpa.models.Topic;
-import com.noname.duyuru.app.jpa.models.TopicType;
 import com.noname.duyuru.app.jpa.repositories.DepartmentRepository;
 import com.noname.duyuru.app.jpa.repositories.TopicRepository;
 import com.noname.duyuru.app.mvc.message.IViewMessage;
@@ -50,7 +49,7 @@ public class TopicUpdater {
 
 			int addedCount = 0;
 
-			final List<Topic> currentCourseTopics = topicRepository.getByType(TopicType.CENG_CLASS);
+			final List<Topic> currentCourseTopics = topicRepository.getByDepartmentId(department.getId());
 			//TODO hatada duraklama ekle
 
 			final StringBuilder addedTopicsString = new StringBuilder();
@@ -60,12 +59,14 @@ public class TopicUpdater {
 
 				final Topic topicFromHtml = new Topic();    //TODO topic builder ile oluştur
 				topicFromHtml.setId(courseId);
+				topicFromHtml.setDepartmentId(department.getId());
 
 				if (!topicRepository.existsByBoardAppend(courseAppend)) { //when new topic (by link) is found
 					topicFromHtml.setBoardAppend(courseAppend);
-					//TODO change these to department
+					topicFromHtml.setAnnSelector(department.getClassAnnSelector());
+					topicFromHtml.setAnnTitleSelector(department.getClassAnnTitleSelector());
+					topicFromHtml.setAnnLinkSelector(department.getClassAnnLinkSelector());
 					topicFromHtml.setBaseLink(department.getBaseLink());
-					topicFromHtml.setType(TopicType.CENG_CLASS);
 
 					topicRepository.save(topicFromHtml);
 					addedTopicsString.append(topicFromHtml.getId());

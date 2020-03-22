@@ -15,7 +15,8 @@
                                 ${ann.date}
                         </span>
                         <span class="col-md col-12">
-                            <a<c:if test="${!ann.link.equals(\"\")}"> href="${ann.url}"</c:if>>${ann.title}</a>
+                            <a
+                                    <c:if test="${!ann.link.equals(\"\")}"> href="${ann.url}" target="_blank"</c:if>>${ann.title}</a>
                         </span>
                     </div>
                 </div>

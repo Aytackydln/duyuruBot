@@ -1,7 +1,6 @@
 package com.noname.duyuru.app.jpa.repositories;
 
 import com.noname.duyuru.app.jpa.models.Topic;
-import com.noname.duyuru.app.jpa.models.TopicType;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,9 +8,12 @@ import java.util.List;
 
 @Repository
 public interface TopicRepository extends PagingAndSortingRepository<Topic, String> {
-	List<Topic> getByType(TopicType topicType);
+    List<Topic> findAll();
 
-	List<Topic> findAll();
+    List<Topic> getByDepartmentId(String string);
 
-	boolean existsByBoardAppend(String boardAppend);
+    List<Topic> getByDepartmentIdNotNull();
+
+
+    boolean existsByBoardAppend(String boardAppend);
 }

@@ -47,9 +47,9 @@ public class AnnouncementService {
 	@Transactional(readOnly = true)
 	public Page<User> getUsersWithSubscriptions(Pageable pageable) {
 		final Page<User> usersWithSubscriptions = subscriptionRepository.getUsersWithSubscriptions(pageable);
-		/*for (User u : usersWithSubscriptions) {
+		for (User u : usersWithSubscriptions) {
 			u.getSubscriptions().size();
-		}*/
+		}
 		return usersWithSubscriptions;
 	}
 
@@ -58,21 +58,6 @@ public class AnnouncementService {
 		for (final Topic topic : topics) {
 			LOGGER.debug("Checking {}", topic.getId());
 			try {
-				/*
-				switch (topic.getType()) {
-					case CENG_CLASS:
-						classCheck(topic);
-						break;
-					case MF:
-						mfCheck(topic);
-						break;
-					case CENG:
-						//logger.error("department: "+topic.getId()+" exist in topic table");
-					//TODO
-					departmentCheck(topic);
-					break;
-				}
-				 */
 				checkAnnouncements(topic);
 			} catch (final ResourceAccessException | IOException e) {
 				LOGGER.error("could not access topic: {}({})", topic.getId(), e.getClass().getName());
@@ -81,17 +66,17 @@ public class AnnouncementService {
 	}
 
 	public IViewMessage clearAnnouncements() {
-		StringBuilder sb=new StringBuilder();
-		for (Topic topic:topicRepository.getByType(TopicType.CENG_CLASS)){
-			List<Announcement> savedAnnouncements=announcementRepository.getAllByTopic(topic);
+		StringBuilder sb = new StringBuilder();
+		for (Topic topic : topicRepository.getByDepartmentIdNotNull()) {
+			List<Announcement> savedAnnouncements = announcementRepository.getAllByTopic(topic);
 
 			try {
 				final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
-				final Elements links = doc.select("#ContentPlaceHolder1_TreeView1>div a");
+				final Elements links = doc.select(topic.getAnnSelector());
 				for (Element link : links) {
 					//TODO Announcement builder from html element
 					final Announcement announcement = buildAnnouncement(topic, link);
-					savedAnnouncements.remove(announcement);
+					savedAnnouncements.remove(announcement);    //Saved announcements becomes list to delete
 				}
 				if (savedAnnouncements.size() > 0) {
 					sb.append(topic.getId());
@@ -134,32 +119,6 @@ public class AnnouncementService {
 		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
 		final Elements links = doc.select(topic.getAnnSelector());
 		LOGGER.debug("{} links are going to be checked with general method", links.size());
-		processLinks(topic, links);
-	}
-
-	//TODO remove
-	private void mfCheck(final Topic topic) throws IOException {
-		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
-		final Elements links = doc.select("#block-system-main tbody a");
-		LOGGER.debug("{} links are going to be checked", links.size());
-		processLinks(topic, links);
-	}
-
-	//TODO remove
-	private void departmentCheck(final Topic topic) throws IOException {
-		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
-		final Elements rows = doc.select("#ContentPlaceHolder1_GridView1 tr");
-		rows.last().empty();
-		final Elements links = rows.select("a");
-		LOGGER.debug("{} links are going to be checked", links.size());
-		processLinks(topic, links);
-	}
-
-	//TODO remove
-	private void classCheck(final Topic topic) throws IOException {
-		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
-		final Elements links = doc.select("div#ContentPlaceHolder1_TreeView1>div a");
-		LOGGER.debug("{} links are going to be checked", links.size());
 		processLinks(topic, links);
 	}
 

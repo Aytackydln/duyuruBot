@@ -8,9 +8,9 @@ import java.io.Serializable;
 //TODO cachable on existsById?
 public class Topic implements Serializable {
     private String id;
+    private String departmentId;
     private String baseLink;
     private String boardAppend;
-    private TopicType type;
     private String annSelector;
     private String annTitleSelector;
     private String annLinkSelector;
@@ -47,6 +47,15 @@ public class Topic implements Serializable {
         this.id = id;
     }
 
+    //should be also an @Id in the future
+    public String getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(String departmentId) {
+        this.departmentId = departmentId;
+    }
+
     public String getBaseLink() {
         return baseLink;
     }
@@ -61,15 +70,6 @@ public class Topic implements Serializable {
 
     public void setBoardAppend(String boardAppend) {
         this.boardAppend = boardAppend;
-    }
-
-    @Enumerated(EnumType.STRING)
-    public TopicType getType() {
-        return type;
-    }
-
-    public void setType(TopicType type) {
-        this.type = type;
     }
 
     public String getAnnSelector() {
