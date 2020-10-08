@@ -37,7 +37,7 @@ public class Subscription implements Serializable {
     }
 
     @Id
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, optional = false)
+    @ManyToOne(cascade = {CascadeType.MERGE}, optional = false)
     public User getUser() {
         return user;
     }
@@ -47,7 +47,7 @@ public class Subscription implements Serializable {
     }
 
     @Id
-    @ManyToOne(cascade = CascadeType.REMOVE, optional = false)
+    @ManyToOne(optional = false)
     public Topic getTopic() {
         return topic;
     }
