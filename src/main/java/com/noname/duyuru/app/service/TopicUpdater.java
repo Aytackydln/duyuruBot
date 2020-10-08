@@ -82,7 +82,7 @@ public class TopicUpdater {
 
 			//delete topics if they are not in the page
 			List<String> deletedTopicNames = currentCourseTopics.stream().map(Topic::getId).collect(Collectors.toList());
-			String deletedTopicsString = String.join(",", deletedTopicNames);
+			String deletedTopicsString = String.join(",\n", deletedTopicNames);
 			LOGGER.info("Deleting " + currentCourseTopics.size() + " topic(s): " + deletedTopicsString);
 			topicRepository.deleteAll(currentCourseTopics);
 			String output = "added " + addedCount + "<br> deleted " + currentCourseTopics.size() + " topics<br>";
