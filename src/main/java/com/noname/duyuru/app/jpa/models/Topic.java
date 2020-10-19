@@ -2,6 +2,7 @@ package com.noname.duyuru.app.jpa.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -14,6 +15,7 @@ public class Topic implements Serializable {
     private String annSelector;
     private String annTitleSelector;
     private String annLinkSelector;
+    private List<Subscription> subscriptions;
     //TODO subscribers ekle
 
     @Override
@@ -94,6 +96,15 @@ public class Topic implements Serializable {
 
     public void setAnnLinkSelector(String annLinkSelector) {
         this.annLinkSelector = annLinkSelector;
+    }
+
+    @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "topic")
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(List<Subscription> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 
     @Transient

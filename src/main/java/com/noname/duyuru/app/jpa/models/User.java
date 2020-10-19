@@ -92,7 +92,7 @@ public class User implements Serializable{
         this.languageCode = language;
     }
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST})
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }
