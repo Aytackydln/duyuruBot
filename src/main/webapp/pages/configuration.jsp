@@ -79,8 +79,8 @@
                     <td><input id="defaultLanguage" name="defaultLanguage"></td>
                 </tr>
                 <tr>
-                    <td><label for="wekhookUrl">Webhook url:</label></td>
-                    <td><input id="wekhookUrl" name="webhookUrl"></td>
+                    <td><label for="wekhookUrl">Application url:</label></td>
+                    <td><input id="wekhookUrl" name="webhookUrl" value="${configuration.webhookUrl}"></td>
                 </tr>
                 <tr>
                     <td><label for="webhookToken">Webhook token:</label></td>

@@ -77,15 +77,15 @@ public class ConfigurationController {
 			else
 				updated.add("configurationType");
 		}
-		if (!webhookUrl.equals("")) {
+		if (!webhookUrl.equals(configurationSet.getWebhookUrl())) {
 			configurationService.set("webhookUrl", webhookUrl);
 			updated.add("webhookUrl");
 		}
-		if(!certificate.equals("")){
+		if (!certificate.equals("")) {
 			configurationService.set("certificate", certificate);
 			updated.add("certificate");
 		}
-		if(!webhookToken.equals("")){
+		if (!webhookToken.equals("")) {
 			configurationSet.setWebhookToken(webhookToken);
 			updated.add("webhookToken");
 		}
