@@ -1,4 +1,4 @@
-package com.noname.duyuru.app.json.response;
+package com.noname.duyuru.app.json.telegram.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SendMessage implements JsonResponseEntity {
+public class SendMessage implements TelegramResponse {
 	private static final Logger LOGGER = LogManager.getLogger(SendMessage.class);
 
 	private long chatId;
@@ -78,14 +78,14 @@ public class SendMessage implements JsonResponseEntity {
 	}
 
 	@Override
-	public JsonResponseEntity onError(HttpClientErrorException e) {
+	public TelegramResponse onError(HttpClientErrorException e) {
 		switch (e.getRawStatusCode()) {
-            case 403:
-                LOGGER.info("User {} is disabled. Subscriptions should be deleted.\n{}", chatId, e.getResponseBodyAsString());
-                //TODO sublarını sil
-                return null;
-            default:
-                return this;
-        }
+			case 403:
+				LOGGER.info("User {} is disabled. Subscriptions should be deleted.\n{}", chatId, e.getResponseBodyAsString());
+				//TODO sublarını sil
+				return null;
+			default:
+				return this;
+		}
 	}
 }

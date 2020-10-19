@@ -41,7 +41,7 @@ public class PollingService implements DisposableBean {
 	private int lastUpdate = 0;
 	private Thread pollingThread;
 
-	private Runnable runnable = new Runnable() {
+	private final Runnable runnable = new Runnable() {
 		@Override
 		public void run() {
 			try {

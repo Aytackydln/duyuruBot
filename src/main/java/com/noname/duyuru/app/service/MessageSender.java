@@ -1,9 +1,9 @@
 package com.noname.duyuru.app.service;
 
 import com.noname.duyuru.app.jpa.models.User;
-import com.noname.duyuru.app.json.response.DeleteMessage;
-import com.noname.duyuru.app.json.response.JsonResponseEntity;
-import com.noname.duyuru.app.json.response.SendMessage;
+import com.noname.duyuru.app.json.telegram.response.DeleteMessage;
+import com.noname.duyuru.app.json.telegram.response.SendMessage;
+import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
 import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +31,7 @@ public class MessageSender implements DisposableBean {
 
 	private final ConfigurationSet configurationSet;
 
-	private final BlockingQueue<JsonResponseEntity> messageQueue = new ArrayBlockingQueue<>(256);
+	private final BlockingQueue<TelegramResponse> messageQueue = new ArrayBlockingQueue<>(256);
 	private final Thread sendingThread = new Thread() {
 		@Override
 		public void run() {
@@ -41,7 +41,7 @@ public class MessageSender implements DisposableBean {
 						LOGGER.info("stopping message thread");
 						return;
 					}
-					final JsonResponseEntity responseToSend = messageQueue.take();
+					final TelegramResponse responseToSend = messageQueue.take();
 					final long startTime = System.currentTimeMillis();
 
 					final HttpHeaders headers = new HttpHeaders();
@@ -56,13 +56,13 @@ public class MessageSender implements DisposableBean {
 						}
 					}
 
-					final HttpEntity<JsonResponseEntity> request = new HttpEntity<>(responseToSend, headers);
+					final HttpEntity<TelegramResponse> request = new HttpEntity<>(responseToSend, headers);
 					try {
 						telegramClient.postForEntity("/" + responseToSend.getMethod(), request, String.class);
 
 					} catch (final HttpClientErrorException e) {
 						//TODO 403'te subları sil
-						JsonResponseEntity failedResponse = responseToSend.onError(e);
+						TelegramResponse failedResponse = responseToSend.onError(e);
 						if (failedResponse != null)
 							messageQueue.add(failedResponse);
 					} catch (final ResourceAccessException e) {
@@ -119,7 +119,7 @@ public class MessageSender implements DisposableBean {
 		submitResponseAsync(new DeleteMessage(user.getId(), messageId));
 	}
 
-	void send(final JsonResponseEntity response) {
+	void send(final TelegramResponse response) {
 		if (response.isLimited()) {
 			try {
 				messageQueue.put(response);    //TODO @Async("msgSender") li method yap
@@ -131,11 +131,11 @@ public class MessageSender implements DisposableBean {
 	}
 
 	@Async
-	void submitResponseAsync(JsonResponseEntity responseEntity) {
+	void submitResponseAsync(TelegramResponse responseEntity) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		final HttpEntity<JsonResponseEntity> request = new HttpEntity<>(responseEntity, headers);
+		final HttpEntity<TelegramResponse> request = new HttpEntity<>(responseEntity, headers);
 
 		try {
 			telegramClient.postForEntity("/" + responseEntity.getMethod(), request, String.class);

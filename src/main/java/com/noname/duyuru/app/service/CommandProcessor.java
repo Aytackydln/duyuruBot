@@ -8,8 +8,8 @@ import com.noname.duyuru.app.jpa.repositories.MessageRepository;
 import com.noname.duyuru.app.jpa.repositories.SubscriptionRepository;
 import com.noname.duyuru.app.jpa.repositories.TopicRepository;
 import com.noname.duyuru.app.json.models.*;
-import com.noname.duyuru.app.json.response.JsonResponseEntity;
-import com.noname.duyuru.app.json.response.SendMessage;
+import com.noname.duyuru.app.json.telegram.response.SendMessage;
+import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
 import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,17 +39,17 @@ public class CommandProcessor {
 	private final CustomKeyboard userKeyboard;
 
 	CommandProcessor(final SubscriptionRepository subscriptionRepository, final TopicRepository topicRepository,
-			final MessageSender messageSender, final MessageRepository messageRepository,
-			final DictionaryKeeper dictionaryKeeper, CustomKeyboard userKeyboard) {
+					 final MessageSender messageSender, final MessageRepository messageRepository,
+					 final DictionaryKeeper dictionaryKeeper, CustomKeyboard userKeyboard) {
 		this.subscriptionRepository = subscriptionRepository;
 		this.topicRepository = topicRepository;
 		this.messageSender = messageSender;
 		this.messageRepository = messageRepository;
 		this.dictionaryKeeper = dictionaryKeeper;
-		this.userKeyboard=userKeyboard;
+		this.userKeyboard = userKeyboard;
 	}
 
-	public JsonResponseEntity processUpdate(final Update update) {
+	public TelegramResponse processUpdate(final Update update) {
 		final Message message;
 		final User user;
 		if (update.getMessage() == null) {//means this is a callback
@@ -173,8 +173,8 @@ public class CommandProcessor {
 		return new SendMessage(user.getId(), translate(user, "UNSUBSCRIBE_LIST_HEADER")).keyboard(inlineKeyboard);
 	}
 
-	private JsonResponseEntity subscribe(final CallbackQuery query, final String topic) {
-		final User user=query.getFrom();
+	private TelegramResponse subscribe(final CallbackQuery query, final String topic) {
+		final User user = query.getFrom();
 
 		try {
 			subscribe(user, topic);
@@ -205,8 +205,8 @@ public class CommandProcessor {
 		subscriptionRepository.save(subscription);
 	}
 
-	private JsonResponseEntity unsubscribe(final CallbackQuery query, final String topic) {
-		final User user=query.getFrom();
+	private TelegramResponse unsubscribe(final CallbackQuery query, final String topic) {
+		final User user = query.getFrom();
 
 		final Subscription subscription = new Subscription();
 		subscription.setUser(user);
