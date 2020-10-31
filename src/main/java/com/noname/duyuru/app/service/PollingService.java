@@ -32,7 +32,7 @@ import java.util.Set;
 public class PollingService implements DisposableBean {
 	private static final Logger LOGGER = LogManager.getLogger(PollingService.class);
 
-	private final MessageSender messageSender;
+	private final TelegramService telegramService;
 	private final ConfigurationSet configurationSet;
 	private final DictionaryKeeper dictionaryKeeper;
 	private final CommandProcessor commandProcessor;
@@ -63,7 +63,7 @@ public class PollingService implements DisposableBean {
 						for (final Update update : getUpdates()) {
 							try {
 								lastUpdate = update.getUpdateId() + 1;
-								messageSender.send(commandProcessor.processUpdate(update));
+								telegramService.sendCommand(commandProcessor.processUpdate(update));
 							} catch (Exception e) {
 								LOGGER.error(e);
 							}
@@ -110,9 +110,9 @@ public class PollingService implements DisposableBean {
 		}
 	};
 
-	public PollingService(MessageSender messageSender, ConfigurationSet configurationSet, DictionaryKeeper dictionaryKeeper,
-			CommandProcessor commandProcessor, RestTemplate telegramClient) {
-		this.messageSender = messageSender;
+	public PollingService(TelegramService telegramService, ConfigurationSet configurationSet, DictionaryKeeper dictionaryKeeper,
+						  CommandProcessor commandProcessor, RestTemplate telegramClient) {
+		this.telegramService = telegramService;
 		this.configurationSet = configurationSet;
 		this.dictionaryKeeper = dictionaryKeeper;
 		this.commandProcessor = commandProcessor;
@@ -139,7 +139,7 @@ public class PollingService implements DisposableBean {
 		lastUpdate++;
 
 		for (final User user : apologyList) {
-			messageSender.sendMessage(user,
+			telegramService.sendMessage(user,
 					dictionaryKeeper.getTranslation(user.getLanguage(), "UNAVAILABLE_APOLOGY"));
 		}
 	}

@@ -30,13 +30,13 @@ public class AnnouncementService {
 
 	private final SubscriptionRepository subscriptionRepository;
 	private final AnnouncementRepository announcementRepository;
-	private final MessageSender messageSender;
+	private final TelegramService telegramService;
 	private final TopicRepository topicRepository;
 
-	public AnnouncementService(SubscriptionRepository subscriptionRepository, AnnouncementRepository announcementRepository, MessageSender messageSender, TopicRepository topicRepository) {
+	public AnnouncementService(SubscriptionRepository subscriptionRepository, AnnouncementRepository announcementRepository, TelegramService telegramService, TopicRepository topicRepository) {
 		this.subscriptionRepository = subscriptionRepository;
 		this.announcementRepository = announcementRepository;
-		this.messageSender = messageSender;
+		this.telegramService = telegramService;
 		this.topicRepository = topicRepository;
 	}
 
@@ -140,7 +140,7 @@ public class AnnouncementService {
 
 	private void notifySubscribers(final Announcement announcement) {
 		for (Subscription subscription : subscriptionRepository.findAllByTopic(announcement.getTopic())) {
-			messageSender.sendMessage(subscription.getUser(), announcement.toString());
+			telegramService.sendMessage(subscription.getUser(), announcement.toString());
 		}
 	}
 }

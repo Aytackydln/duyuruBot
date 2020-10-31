@@ -26,12 +26,12 @@ public class TopicUpdater {
 
 	private final TopicRepository topicRepository;
 	private final DepartmentRepository departmentRepository;
-	private final MessageSender messageSender;
+	private final TelegramService telegramService;
 
-	public TopicUpdater(TopicRepository topicRepository, DepartmentRepository departmentRepository, MessageSender messageSender) {
+	public TopicUpdater(TopicRepository topicRepository, DepartmentRepository departmentRepository, TelegramService telegramService) {
 		this.topicRepository = topicRepository;
 		this.departmentRepository = departmentRepository;
-		this.messageSender = messageSender;
+		this.telegramService = telegramService;
 	}
 
 	public Collection<IViewMessage> updateTopics() {
@@ -73,7 +73,7 @@ public class TopicUpdater {
 					addedTopicsString.append(',');
 					addedCount++;
 
-					messageSender.sendMessageToMaster("New topic\n" + topicFromHtml);
+					telegramService.sendMessageToMaster("New topic\n" + topicFromHtml);
 				} else { //when course is already in database
 					currentCourseTopics.remove(topicFromHtml); //remove the topic from the list, remaining ones will be deleted
 				}
@@ -91,7 +91,7 @@ public class TopicUpdater {
 			}
 			if (currentCourseTopics.size() > 0) {
 				output += "<br>Deleted: " + deletedTopicsString + "<br>";
-				messageSender.sendMessageToMaster("Deleted topics: " + deletedTopicsString);
+				telegramService.sendMessageToMaster("Deleted topics: " + deletedTopicsString);
 			}
 			return output;
 		} catch (IOException e) {

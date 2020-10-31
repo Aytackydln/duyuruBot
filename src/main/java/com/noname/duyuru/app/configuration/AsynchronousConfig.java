@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 @EnableAsync
 public class AsynchronousConfig {
-    @Bean(name = "executor", destroyMethod = "shutdown")
+    @Bean(name = "taskExecutor", destroyMethod = "shutdown")
     public ThreadPoolTaskExecutor taskExecutor() {
         final ThreadPoolTaskExecutor scheduledExecutorService = new ThreadPoolTaskExecutor();
         scheduledExecutorService.setCorePoolSize(3);

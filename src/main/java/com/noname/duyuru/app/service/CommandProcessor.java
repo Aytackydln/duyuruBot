@@ -33,17 +33,17 @@ public class CommandProcessor {
 	private final SubscriptionRepository subscriptionRepository;
 	private final TopicRepository topicRepository;
 	private final MessageRepository messageRepository;
-	private final MessageSender messageSender;
+	private final TelegramService telegramService;
 	private final DictionaryKeeper dictionaryKeeper;
 
 	private final CustomKeyboard userKeyboard;
 
 	CommandProcessor(final SubscriptionRepository subscriptionRepository, final TopicRepository topicRepository,
-					 final MessageSender messageSender, final MessageRepository messageRepository,
+					 final TelegramService telegramService, final MessageRepository messageRepository,
 					 final DictionaryKeeper dictionaryKeeper, CustomKeyboard userKeyboard) {
 		this.subscriptionRepository = subscriptionRepository;
 		this.topicRepository = topicRepository;
-		this.messageSender = messageSender;
+		this.telegramService = telegramService;
 		this.messageRepository = messageRepository;
 		this.dictionaryKeeper = dictionaryKeeper;
 		this.userKeyboard = userKeyboard;
@@ -67,7 +67,7 @@ public class CommandProcessor {
 				return new SendMessage(user.getId(), translate(user, "REQUEST_ERROR"));
 			}
 
-			messageSender.deleteMessage(user, message.getMessageId());  //TODO future ile silinip silinmediğine bak
+			telegramService.deleteMessage(user, message.getMessageId());  //TODO future ile silinip silinmediğine bak
 
 			//check cancel button
 			if (data.equals(CANCEL_STRING)) {
@@ -93,20 +93,20 @@ public class CommandProcessor {
 			//TODO control timeout here
 
 			final String text = message.getText();
-			if (text==null) return null;
+			if (text == null) return null;
 
 			messageRepository.save(message);
-			messageSender.deleteMessage(message.getUser(), message.getMessageId());
+			telegramService.deleteMessage(message.getUser(), message.getMessageId());
 
 			switch (text) {
-			case "/list":
-				return listSubscriptions(message.getUser());
-			case "/subscribe":
-				return listTopicsToSubscribe(message.getUser());
-			case "/unsubscribe":
-				return listTopicsToUnsubscribe(message.getUser());
-			case "/start":
-				return introduce(message.getUser());
+				case "/list":
+					return listSubscriptions(message.getUser());
+				case "/subscribe":
+					return listTopicsToSubscribe(message.getUser());
+				case "/unsubscribe":
+					return listTopicsToUnsubscribe(message.getUser());
+				case "/start":
+					return introduce(message.getUser());
 			default:
 				return null;
 			}
@@ -122,7 +122,7 @@ public class CommandProcessor {
 
 		listSubscriptions(user);
 
-		messageSender.sendMessageToMaster("Yeni katılan: " + user.getFullName() + ", " + user.getUsername());
+		telegramService.sendMessageToMaster("Yeni katılan: " + user.getFullName() + ", " + user.getUsername());
 		final SendMessage welcome = new SendMessage(user.getId(), translate(user, "WELCOME"));
 		welcome.keyboard(userKeyboard);
 		return welcome;
@@ -179,7 +179,7 @@ public class CommandProcessor {
 		try {
 			subscribe(user, topic);
 
-			messageSender.send(listTopicsToSubscribe(user));
+			telegramService.sendCommand(listTopicsToSubscribe(user));
 			return new SendMessage(user.getId(), topic + " -> " + translate(user, "SUBSCRIBE_SUCCESS"));
 		} catch (JpaObjectRetrievalFailureException e) {
 			LOGGER.error("attempted to subscribe non-existing {}", topic);
@@ -187,7 +187,7 @@ public class CommandProcessor {
 					topic + " -> " + translate(user, translate(user, "TOPIC_NOT_EXISTS")));
 		} catch (Exception e) {
 			LOGGER.error("Unhandled error in subscribe method", e);
-			messageSender.sendMessageToMaster(user.getFullName()+" ("+user.getId()+") "+topic+" abone olmaya çalıştı");
+			telegramService.sendMessageToMaster(user.getFullName() + " (" + user.getId() + ") " + topic + " abone olmaya çalıştı");
 			return new SendMessage(user.getId(),
 					topic + " -> " + translate(user, translate(user, "SUBSCRIBE_FAIL") + " (" + e.getClass() + ")"));
 		}
@@ -218,7 +218,7 @@ public class CommandProcessor {
 		try {
 			subscriptionRepository.delete(subscription);
 
-			messageSender.send(listTopicsToUnsubscribe(user));
+			telegramService.sendCommand(listTopicsToUnsubscribe(user));
 			return new SendMessage(user.getId(), topic + " -> " + translate(user, "UNSUBSCRIBE_SUCCESS"));
 		} catch (Exception e) {
 			LOGGER.error("Unhandled error in unsubscribe method", e);
