@@ -1,6 +1,7 @@
 package com.noname.duyuru.app.configuration;
 
 import com.noname.duyuru.app.service.AnnouncementService;
+import com.noname.duyuru.app.service.SubscriptionService;
 import com.noname.duyuru.app.service.TopicUpdater;
 import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +16,14 @@ public class ScheduleConfiguration {
 
 	private final ConfigurationSet configurationSet;
 	private final AnnouncementService announcementService;
+	private final SubscriptionService subscriptionService;
 	private final TopicUpdater topicUpdater;
 
 	public ScheduleConfiguration(ConfigurationSet configurationSet, AnnouncementService announcementService,
-			TopicUpdater topicUpdater) {
+								 SubscriptionService subscriptionService, TopicUpdater topicUpdater) {
 		this.configurationSet = configurationSet;
 		this.announcementService = announcementService;
+		this.subscriptionService = subscriptionService;
 		this.topicUpdater = topicUpdater;
 	}
 
@@ -36,7 +39,7 @@ public class ScheduleConfiguration {
     @Scheduled(cron = "0 0/5 * * * ?")
 	public final void checkAnnouncements() {
 		if (configurationSet.isAnnouncementCheckEnabled()) {
-			announcementService.checkNewAnnouncements();
+			subscriptionService.checkNewAnnouncements();
 		}
 	}
 

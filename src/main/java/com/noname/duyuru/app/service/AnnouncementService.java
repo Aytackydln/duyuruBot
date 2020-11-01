@@ -1,6 +1,8 @@
 package com.noname.duyuru.app.service;
 
-import com.noname.duyuru.app.jpa.models.*;
+import com.noname.duyuru.app.jpa.models.Announcement;
+import com.noname.duyuru.app.jpa.models.Subscription;
+import com.noname.duyuru.app.jpa.models.Topic;
 import com.noname.duyuru.app.jpa.repositories.AnnouncementRepository;
 import com.noname.duyuru.app.jpa.repositories.SubscriptionRepository;
 import com.noname.duyuru.app.jpa.repositories.TopicRepository;
@@ -17,9 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.io.IOException;
 import java.util.Date;
@@ -43,27 +43,6 @@ public class AnnouncementService {
 
 	public Page<Announcement> getAnnouncements(Pageable page) {
 		return announcementRepository.findAll(page);
-	}
-
-	@Transactional(readOnly = true)
-	public Page<User> getUsersWithSubscriptions(Pageable pageable) {
-		final Page<User> usersWithSubscriptions = subscriptionRepository.getUsersWithSubscriptions(pageable);
-		for (User u : usersWithSubscriptions) {
-			u.getSubscriptions().size();
-		}
-		return usersWithSubscriptions;
-	}
-
-	public void checkNewAnnouncements() {
-		final List<Topic> topics = subscriptionRepository.findDistinctTopics();
-		for (final Topic topic : topics) {
-			LOGGER.debug("Checking {}", topic.getId());
-			try {
-				checkAnnouncements(topic);
-			} catch (final ResourceAccessException | IOException e) {
-				LOGGER.error("could not access topic: {}({})", topic.getId(), e.getClass().getName());
-			}
-		}
 	}
 
 	public IViewMessage clearAnnouncements() {
@@ -98,15 +77,22 @@ public class AnnouncementService {
 	}
 
 	@Async
-	void processLinks(final Topic topic, final Elements links) {
+	void checkAnnouncements(final Topic topic) throws IOException {
+		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
+		final Elements links = doc.select(topic.getAnnSelector());
+		LOGGER.debug("{} links are going to be checked with general method", links.size());
+		processLinks(topic, links);
+	}
+
+	private void processLinks(final Topic topic, final Elements links) {
+		LOGGER.debug("processing topic: {}", topic);
 		for (final Element link : links) {
 			try {
 				//TODO Announcement builder from html element
 				final Announcement announcement = buildAnnouncement(topic, link);
 				announcement.setDate(new Date());
 
-				final AnnouncementKey key = announcement.getId();
-				if (!announcementRepository.existsById(key)) {
+				if (!announcementRepository.existsById(announcement.getId())) {
 					announcementRepository.save(announcement);
 					notifySubscribers(announcement);
 				}
@@ -114,13 +100,6 @@ public class AnnouncementService {
 				LOGGER.error(e);
 			}
 		}
-	}
-
-	private void checkAnnouncements(final Topic topic) throws IOException {
-		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
-		final Elements links = doc.select(topic.getAnnSelector());
-		LOGGER.debug("{} links are going to be checked with general method", links.size());
-		processLinks(topic, links);
 	}
 
 	private Announcement buildAnnouncement(Topic topic, Element htmlElement) {
