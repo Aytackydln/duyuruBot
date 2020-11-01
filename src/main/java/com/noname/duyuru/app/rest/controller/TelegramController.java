@@ -2,7 +2,7 @@ package com.noname.duyuru.app.rest.controller;
 
 import com.noname.duyuru.app.json.models.Update;
 import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
-import com.noname.duyuru.app.service.CommandProcessor;
+import com.noname.duyuru.app.service.telegram.CommandProcessor;
 import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

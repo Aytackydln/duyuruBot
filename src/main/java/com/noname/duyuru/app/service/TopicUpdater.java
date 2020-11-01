@@ -6,6 +6,7 @@ import com.noname.duyuru.app.jpa.repositories.DepartmentRepository;
 import com.noname.duyuru.app.jpa.repositories.TopicRepository;
 import com.noname.duyuru.app.mvc.message.IViewMessage;
 import com.noname.duyuru.app.mvc.message.SuccessMessage;
+import com.noname.duyuru.app.service.telegram.TelegramService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;

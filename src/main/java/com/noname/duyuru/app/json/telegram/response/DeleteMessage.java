@@ -12,7 +12,6 @@ public class DeleteMessage implements TelegramResponse {
 	private final long chatId;
 	private final long messageId;
 
-	@JsonIgnore
 	private boolean errorProcessed = false;
 
 	public DeleteMessage(final long chat_id, final long message_id) {
@@ -42,15 +41,37 @@ public class DeleteMessage implements TelegramResponse {
 	}
 
 	@Override
-	public TelegramResponse onError(HttpClientErrorException e) {
-		if (!errorProcessed) {
-			LOGGER.error("Error while sending delete message response: \n chatId: {} messageId: {}", chatId, messageId);
-			LOGGER.error(e.getResponseBodyAsString());
-		} else {
-			LOGGER.trace("Error while sending delete message response: \n chatId: {} messageId: {}", chatId, messageId);
-			LOGGER.trace(e.getResponseBodyAsString());
+	public TelegramResponse onError(Exception e) {
+		try {
+			throw e;
+		} catch (HttpClientErrorException ce) {
+			if (!errorProcessed) {
+				errorProcessed = true;
+				LOGGER.error("Error while sending delete message response: \n chatId: {} messageId: {}", chatId, messageId);
+				LOGGER.error(ce.getResponseBodyAsString());
+			} else {
+				LOGGER.trace("Error while sending delete message response: \n chatId: {} messageId: {}", chatId, messageId);
+				LOGGER.trace(ce.getResponseBodyAsString());
+			}
+
+			return null;
+		} catch (Exception exception) {
 		}
 
+		LOGGER.error("Error while sending delete message response: \n chatId: {} messageId: {}", chatId, messageId);
 		return null;
+	}
+
+	@Override
+	public void preSend() {
+		//doesn't need
+	}
+
+	@Override
+	public String toString() {
+		return "DeleteMessage{" +
+				"chatId=" + chatId +
+				", messageId=" + messageId +
+				'}';
 	}
 }

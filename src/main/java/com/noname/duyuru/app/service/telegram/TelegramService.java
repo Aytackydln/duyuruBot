@@ -1,4 +1,4 @@
-package com.noname.duyuru.app.service;
+package com.noname.duyuru.app.service.telegram;
 
 import com.noname.duyuru.app.jpa.models.User;
 import com.noname.duyuru.app.json.telegram.response.DeleteMessage;
@@ -19,13 +19,14 @@ import org.springframework.web.client.ResourceAccessException;
 public class TelegramService implements DisposableBean {
     private static final Logger LOGGER = LogManager.getLogger(TelegramService.class);
 
-    private final TelegramCommandSenderService telegramCommandSenderService;
-
+    private final CommandSenderService commandSenderService;
     private final ConfigurationSet configurationSet;
 
-    public TelegramService(TelegramCommandSenderService telegramCommandSenderService, ConfigurationSet configurationSet) {
-        this.telegramCommandSenderService = telegramCommandSenderService;
+    public TelegramService(CommandSenderService commandSenderService, ConfigurationSet configurationSet, CommandObserverService commandObserverService) {
+        this.commandSenderService = commandSenderService;
         this.configurationSet = configurationSet;
+
+        commandObserverService.onCommandAdded(this::sendCommand);
 
         sendMessageToMaster("I have woken up, master");
     }
@@ -33,12 +34,9 @@ public class TelegramService implements DisposableBean {
     void sendCommand(TelegramResponse response) {
         try {
             if (response.isLimited()) {
-                try {
-                    telegramCommandSenderService.sendLimitedResponse(response);
-                } catch (InterruptedException ignored) {
-                }
+                commandSenderService.sendLimitedResponse(response);
             } else {
-                telegramCommandSenderService.submitResponseAsync(response);
+                commandSenderService.submitResponseAsync(response);
             }
         } catch (final HttpClientErrorException e) {
             //TODO 403'te subları sil
@@ -61,16 +59,16 @@ public class TelegramService implements DisposableBean {
         sendMessageToMaster("Goodbye, master...");
     }
 
-    void sendMessage(final User user, final String message) {
+    public void sendMessage(final User user, final String message) {
         final SendMessage sendMessage = new SendMessage(user.getId(), message);
         sendCommand(sendMessage);
     }
 
-    void sendMessageToMaster(final String message) {
+    public void sendMessageToMaster(final String message) {
         sendMessage(configurationSet.getMaster(), message);
     }
 
     void deleteMessage(final User user, final long messageId) {
-        telegramCommandSenderService.submitResponseAsync(new DeleteMessage(user.getId(), messageId));
+        commandSenderService.submitResponseAsync(new DeleteMessage(user.getId(), messageId));
     }
 }

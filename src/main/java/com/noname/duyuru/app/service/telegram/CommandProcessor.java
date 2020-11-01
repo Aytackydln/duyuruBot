@@ -1,4 +1,4 @@
-package com.noname.duyuru.app.service;
+package com.noname.duyuru.app.service.telegram;
 
 import com.noname.duyuru.app.jpa.models.Message;
 import com.noname.duyuru.app.jpa.models.Subscription;

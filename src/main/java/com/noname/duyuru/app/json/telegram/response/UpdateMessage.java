@@ -2,7 +2,6 @@ package com.noname.duyuru.app.json.telegram.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.noname.duyuru.app.json.models.Keyboard;
-import org.springframework.web.client.HttpClientErrorException;
 
 public class UpdateMessage implements TelegramResponse {
     private long chatId;
@@ -65,7 +64,12 @@ public class UpdateMessage implements TelegramResponse {
     }
 
     @Override
-    public TelegramResponse onError(HttpClientErrorException e) {
+    public TelegramResponse onError(Exception e) {
         return null;
+    }
+
+    @Override
+    public void preSend() {
+        //doesn't need
     }
 }

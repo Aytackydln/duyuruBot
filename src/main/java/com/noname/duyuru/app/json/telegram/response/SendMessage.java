@@ -7,6 +7,11 @@ import com.noname.duyuru.app.json.models.Keyboard;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SendMessage implements TelegramResponse {
@@ -16,6 +21,8 @@ public class SendMessage implements TelegramResponse {
 	private String text;
 	private boolean disableNotification;
 	private Keyboard replyMarkup;
+
+	private boolean errorProcessed = false;
 
 	public SendMessage(final long chatId, final String text) {
 		this.chatId = chatId;
@@ -78,14 +85,53 @@ public class SendMessage implements TelegramResponse {
 	}
 
 	@Override
-	public TelegramResponse onError(HttpClientErrorException e) {
-		switch (e.getRawStatusCode()) {
-			case 403:
-				LOGGER.info("User {} is disabled. Subscriptions should be deleted.\n{}", chatId, e.getResponseBodyAsString());
-				//TODO sublarını sil
-				return null;
-			default:
+	public TelegramResponse onError(Exception e) {
+		try {
+			throw e;
+		} catch (HttpClientErrorException ce) {
+			switch (ce.getRawStatusCode()) {
+				case 403:
+					LOGGER.info("User {} is disabled. Subscriptions should be deleted.\n{}",
+							chatId, ce.getResponseBodyAsString());
+					//TODO sublarını sil
+					return null;
+				default:
+					errorProcessed = true;
+					return this;
+			}
+		} catch (ResourceAccessException rae) {
+			LOGGER.error(rae);
+			try {
+				Thread.sleep(10000);    //TODO handle infinite loop?
+			} catch (InterruptedException ignored) {
+			}
+			return this;
+		} catch (Exception exception) {
+			LOGGER.error("unknown error", exception);
+			if (!errorProcessed) {
+				errorProcessed = true;
 				return this;
+			}
+			return null;
 		}
+	}
+
+	@Override
+	public void preSend() {
+		//dont make notification sound between 00:00-07:00
+		final Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+		calendar.setTime(new Date());   // assigns calendar to given date
+		final int hour = calendar.get(Calendar.HOUR_OF_DAY);
+		if (hour < 7) {
+			silent();
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "SendMessage{" +
+				"chatId=" + chatId +
+				", text='" + text + '\'' +
+				'}';
 	}
 }

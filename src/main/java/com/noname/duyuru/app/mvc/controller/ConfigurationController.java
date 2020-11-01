@@ -3,7 +3,7 @@ package com.noname.duyuru.app.mvc.controller;
 import com.noname.duyuru.app.component.VersionKeeper;
 import com.noname.duyuru.app.mvc.message.MessageBox;
 import com.noname.duyuru.app.service.ConfigurationService;
-import com.noname.duyuru.app.service.PollingService;
+import com.noname.duyuru.app.service.telegram.PollingService;
 import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
