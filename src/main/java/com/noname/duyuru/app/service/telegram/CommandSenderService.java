@@ -1,7 +1,6 @@
 package com.noname.duyuru.app.service.telegram;
 
 import com.noname.duyuru.app.configuration.TelegramClientConfig;
-import com.noname.duyuru.app.json.telegram.response.SendMessage;
 import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
 import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.apache.logging.log4j.LogManager;
@@ -52,10 +51,12 @@ public class CommandSenderService {
 			if (errorResponse != null)
 				commandObserverService.addCommand(errorResponse);
 			else {
+				LOGGER.error(e);
+				/*
 				final SendMessage sendMessage = new SendMessage(configurationSet.getMaster().getId(),
 						"unknown error while sending response: " + responseToSend.toString()
 				);
-				commandObserverService.addCommand(sendMessage);
+				commandObserverService.addCommand(sendMessage);*/
 			}
 		}
 	}
