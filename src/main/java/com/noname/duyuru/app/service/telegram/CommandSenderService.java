@@ -18,12 +18,10 @@ public class CommandSenderService {
 
 	private final RestTemplate telegramClient;
 	private final CommandObserverService commandObserverService;
-	private final ConfigurationSet configurationSet;
 
 	public CommandSenderService(RestTemplate telegramClient, CommandObserverService commandObserverService, ConfigurationSet configurationSet) {
 		this.telegramClient = telegramClient;
 		this.commandObserverService = commandObserverService;
-		this.configurationSet = configurationSet;
 	}
 
 	@Async(TelegramClientConfig.LIMITED_COMMAND_SENDER)
@@ -50,14 +48,6 @@ public class CommandSenderService {
 			TelegramResponse errorResponse = responseToSend.onError(e);
 			if (errorResponse != null)
 				commandObserverService.addCommand(errorResponse);
-			else {
-				LOGGER.error(e);
-				/*
-				final SendMessage sendMessage = new SendMessage(configurationSet.getMaster().getId(),
-						"unknown error while sending response: " + responseToSend.toString()
-				);
-				commandObserverService.addCommand(sendMessage);*/
-			}
 		}
 	}
 }

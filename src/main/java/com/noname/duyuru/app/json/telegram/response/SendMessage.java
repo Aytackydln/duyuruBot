@@ -96,8 +96,11 @@ public class SendMessage implements TelegramResponse {
 					//TODO sublarını sil
 					return null;
 				default:
-					errorProcessed = true;
-					return this;
+					if (!errorProcessed) {
+						errorProcessed = true;
+						return this;
+					}
+					return null;
 			}
 		} catch (ResourceAccessException rae) {
 			LOGGER.error(rae);
