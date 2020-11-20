@@ -1,23 +1,23 @@
 package com.noname.duyuru.app.service.dictionary;
 
+import com.noname.duyuru.app.jpa.models.Translation;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.noname.duyuru.app.jpa.models.Translation;
-
-public class Dictionary{
-	private Map<String,String> sentences=new HashMap<>();
+public class Dictionary {
+	private final Map<String, String> sentences = new HashMap<>();
 	private final String language;
 
-	Dictionary(String language){
-		this.language=language;
+	Dictionary(String language) {
+		this.language = language;
 	}
 
 	@Override
-	public boolean equals(Object o){
-		if(this==o) return true;
-		if(o==null||getClass()!=o.getClass()) return false;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 		Dictionary that=(Dictionary)o;
 		return language.equals(that.language);
 	}

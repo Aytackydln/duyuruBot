@@ -17,7 +17,7 @@ import java.util.GregorianCalendar;
 public class SendMessage implements TelegramResponse {
 	private static final Logger LOGGER = LogManager.getLogger(SendMessage.class);
 
-	private long chatId;
+	private final long chatId;
 	private String text;
 	private boolean disableNotification;
 	private Keyboard replyMarkup;

@@ -1,7 +1,7 @@
 package com.noname.duyuru.app.mvc.message;
 
 public class DangerMessage implements IViewMessage {
-	private String message;
+	private final String message;
 
 	public DangerMessage(String message) {
 		this.message = message;
