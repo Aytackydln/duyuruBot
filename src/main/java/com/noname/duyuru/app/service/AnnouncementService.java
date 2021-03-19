@@ -22,8 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class AnnouncementService {
@@ -34,7 +37,10 @@ public class AnnouncementService {
 	private final TelegramService telegramService;
 	private final TopicRepository topicRepository;
 
-	public AnnouncementService(SubscriptionRepository subscriptionRepository, AnnouncementRepository announcementRepository, TelegramService telegramService, TopicRepository topicRepository) {
+	public AnnouncementService(
+			SubscriptionRepository subscriptionRepository, AnnouncementRepository announcementRepository,
+			TelegramService telegramService, TopicRepository topicRepository
+	) {
 		this.subscriptionRepository = subscriptionRepository;
 		this.announcementRepository = announcementRepository;
 		this.telegramService = telegramService;
@@ -46,34 +52,37 @@ public class AnnouncementService {
 	}
 
 	public IViewMessage clearAnnouncements() {
-		StringBuilder sb = new StringBuilder();
+		List<Announcement> clearedAnnouncements = new ArrayList<>();
 		for (Topic topic : topicRepository.getByDepartmentIdNotNull()) {
-			List<Announcement> savedAnnouncements = announcementRepository.getAllByTopic(topic);
-
-			try {
-				final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
-				final Elements links = doc.select(topic.getAnnSelector());
-				for (Element link : links) {
-					//TODO Announcement builder from html element
-					final Announcement announcement = buildAnnouncement(topic, link);
-					savedAnnouncements.remove(announcement);    //Saved announcements becomes list to delete
-				}
-				if (savedAnnouncements.size() > 0) {
-					sb.append(topic.getId());
-					sb.append(": ");
-					for (Announcement announcement : savedAnnouncements) {
-						sb.append(announcement.getTitle());
-						sb.append(", ");
-					}
-					announcementRepository.deleteAll(savedAnnouncements);
-				}
-			} catch (IOException e) {
-				LOGGER.error(e);
-			}
-
+			clearedAnnouncements.addAll(clearAnnouncements(topic));
 		}
-		LOGGER.info("Cleared announcements; {}", sb.toString());
-		return new SuccessMessage(sb.toString());
+		Stream<String> clearedAnnouncementStrings = clearedAnnouncements.stream().map(Announcement::toString);
+		LOGGER.info("Cleared announcements; {}", clearedAnnouncementStrings);
+		return new SuccessMessage(clearedAnnouncementStrings.toString());
+	}
+
+	private List<Announcement> clearAnnouncements(Topic topic) {
+		try {
+			List<Announcement> persistedAnnouncements = announcementRepository.getAllByTopic(topic);
+			List<Announcement> currentAnnouncements = getCurrentAnnouncementsFromPage(topic);
+			persistedAnnouncements.removeAll(currentAnnouncements);
+
+			announcementRepository.deleteAll(persistedAnnouncements);
+			return persistedAnnouncements;
+		} catch (IOException e) {
+			LOGGER.error(e);
+		}
+		return Collections.emptyList();
+	}
+
+	private List<Announcement> getCurrentAnnouncementsFromPage(Topic topic) throws IOException {
+		List<Announcement> announcements = new ArrayList<>();
+		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
+		final Elements links = doc.select(topic.getAnnSelector());
+		for (Element link : links) {
+			announcements.add(buildAnnouncement(topic, link));
+		}
+		return announcements;
 	}
 
 	@Async
