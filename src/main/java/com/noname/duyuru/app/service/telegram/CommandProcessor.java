@@ -11,8 +11,8 @@ import com.noname.duyuru.app.json.models.*;
 import com.noname.duyuru.app.json.telegram.response.SendMessage;
 import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
 import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class CommandProcessor {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CommandProcessor.class);
 	private static final String SUBSCRIBE_KEYWORD = "sub";
 	private static final String UNSUBSCRIBE_KEYWORD = "unsub";
 
@@ -37,17 +38,6 @@ public class CommandProcessor {
 	private final DictionaryKeeper dictionaryKeeper;
 
 	private final CustomKeyboard userKeyboard;
-
-	CommandProcessor(final SubscriptionRepository subscriptionRepository, final TopicRepository topicRepository,
-					 final TelegramService telegramService, final MessageRepository messageRepository,
-					 final DictionaryKeeper dictionaryKeeper, CustomKeyboard userKeyboard) {
-		this.subscriptionRepository = subscriptionRepository;
-		this.topicRepository = topicRepository;
-		this.telegramService = telegramService;
-		this.messageRepository = messageRepository;
-		this.dictionaryKeeper = dictionaryKeeper;
-		this.userKeyboard = userKeyboard;
-	}
 
 	public TelegramResponse processUpdate(final Update update) {
 		final Message message;

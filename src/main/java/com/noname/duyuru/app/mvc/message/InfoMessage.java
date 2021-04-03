@@ -1,24 +1,18 @@
 package com.noname.duyuru.app.mvc.message;
 
-public class InfoMessage implements IViewMessage {
-    private final String message;
+import lombok.Value;
 
-    InfoMessage(String message) {
-        this.message = message;
-    }
+@Value
+public class InfoMessage implements IViewMessage {
+    String message;
 
     @Override
     public final String getHtmlClass() {
         return "alert-info";
     }
 
-	@Override
-	public String getHeader() {
-		return "Info!";
-	}
-
-	@Override
-	public String getMessage() {
-		return message;
-	}
+    @Override
+    public String getHeader() {
+        return "Info!";
+    }
 }

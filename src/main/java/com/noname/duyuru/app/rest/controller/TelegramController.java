@@ -4,8 +4,8 @@ import com.noname.duyuru.app.json.models.Update;
 import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
 import com.noname.duyuru.app.service.telegram.CommandProcessor;
 import com.noname.duyuru.app.setting.ConfigurationSet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,16 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
+@Log4j2
 public class TelegramController {
-	private static final Logger LOGGER = LogManager.getLogger(TelegramController.class);
-
 	private final CommandProcessor commandProcessor;
 	private final ConfigurationSet configurationSet;
-
-	public TelegramController(final CommandProcessor commandProcessor, final ConfigurationSet configurationSet) {
-		this.commandProcessor = commandProcessor;
-		this.configurationSet = configurationSet;
-	}
 
     @PostMapping("webhook/{token}")
     public final ResponseEntity<TelegramResponse> processWebhook(@RequestBody final Update update,
@@ -37,7 +32,7 @@ public class TelegramController {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error("Error processing webhook", e);
 			return null;
 		}
 	}

@@ -1,11 +1,10 @@
 package com.noname.duyuru.app.mvc.message;
 
-public class DangerMessage implements IViewMessage {
-	private final String message;
+import lombok.Value;
 
-	public DangerMessage(String message) {
-		this.message = message;
-	}
+@Value
+public class DangerMessage implements IViewMessage {
+	String message;
 
 	@Override
 	public final String getHtmlClass() {
@@ -15,10 +14,5 @@ public class DangerMessage implements IViewMessage {
 	@Override
 	public String getHeader() {
 		return "Error!";
-	}
-
-	@Override
-	public String getMessage() {
-		return message;
 	}
 }

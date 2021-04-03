@@ -1,13 +1,19 @@
 package com.noname.duyuru.app.jpa.models;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@IdClass(AnnouncementKey.class)
+@IdClass(Announcement.Key.class)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Announcement implements Serializable {
-    private final AnnouncementKey id = new AnnouncementKey();
+    private final Announcement.Key id = new Announcement.Key();
     private Topic topic;
     private String title;
     private String link;
@@ -18,23 +24,9 @@ public class Announcement implements Serializable {
         return "<b>" + topic.toString() + "</b>\n<a href=\"" + getUrl() + "\">" + title + "</a>";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Announcement that = (Announcement) o;
-		return getId().equals(that.getId());
-	}
-
-	@Override
-	public int hashCode() {
-		return getId().hashCode();
-	}
-
     @Transient
-    public AnnouncementKey getId() {
+    @EqualsAndHashCode.Include
+    public Announcement.Key getId() {
         return id;
     }
 
@@ -79,7 +71,15 @@ public class Announcement implements Serializable {
     }
 
     @Transient
-	public String getUrl(){
-		return topic.getBaseLink() + link;
-	}
+    public String getUrl() {
+        return topic.getBaseLink() + link;
+    }
+
+    @Data
+    @Setter(AccessLevel.PRIVATE)
+    public static class Key implements Serializable {
+        private String topic;
+        private String title;
+        private String link;
+    }
 }

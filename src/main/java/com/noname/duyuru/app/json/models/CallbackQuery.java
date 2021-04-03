@@ -1,54 +1,17 @@
 package com.noname.duyuru.app.json.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.noname.duyuru.app.jpa.models.Message;
 import com.noname.duyuru.app.jpa.models.User;
+import lombok.Data;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Data
 public class CallbackQuery{
 	private String id;
 	private Message message;
 	private String data;
 	private User from;
 	private String inlineMessageId;
-
-	public String getId(){
-		return id;
-	}
-
-	public void setId(String id){
-		this.id=id;
-	}
-
-	public Message getMessage(){
-		return message;
-	}
-
-	public void setMessage(Message message){
-		this.message=message;
-	}
-
-	public String getData(){
-		return data;
-	}
-
-	public void setData(String data){
-		this.data=data;
-	}
-
-	public User getFrom(){
-		return from;
-	}
-
-	public void setFrom(User from){
-		this.from=from;
-	}
-
-	@JsonProperty("inline_message_id")
-	public String getInlineMessageId() {
-		return inlineMessageId;
-	}
-
-	public void setInlineMessageId(String inlineMessageId) {
-		this.inlineMessageId = inlineMessageId;
-	}
 }

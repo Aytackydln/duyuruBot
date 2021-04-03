@@ -9,8 +9,8 @@ import com.noname.duyuru.app.mvc.message.IViewMessage;
 import com.noname.duyuru.app.mvc.message.SuccessMessage;
 import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
 import com.noname.duyuru.app.setting.ConfigurationSet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,8 +29,9 @@ import java.util.Random;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class PollingService implements DisposableBean {
-	private static final Logger LOGGER = LogManager.getLogger(PollingService.class);
 
 	private final TelegramService telegramService;
 	private final ConfigurationSet configurationSet;
@@ -54,7 +55,7 @@ public class PollingService implements DisposableBean {
 							apologyInvalidMessages();
 							noConnection = false;
 							LOGGER.info("apology messages sent");
-							if (!configurationSet.getWebhookUrl().equals("") && configurationSet.isWebHookEnabled()) {
+							if (!configurationSet.getWebhookUrl().equals("") && configurationSet.isWebhookEnabled()) {
 								createWebhook();
 								return;
 							} else
@@ -109,15 +110,6 @@ public class PollingService implements DisposableBean {
 			Thread.sleep(1500);
 		}
 	};
-
-	public PollingService(TelegramService telegramService, ConfigurationSet configurationSet, DictionaryKeeper dictionaryKeeper,
-						  CommandProcessor commandProcessor, RestTemplate telegramClient) {
-		this.telegramService = telegramService;
-		this.configurationSet = configurationSet;
-		this.dictionaryKeeper = dictionaryKeeper;
-		this.commandProcessor = commandProcessor;
-		this.telegramClient = telegramClient;
-	}
 
 	public void startPolling() {
 		pollingThread = new Thread(runnable, "poller");

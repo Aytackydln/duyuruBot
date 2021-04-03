@@ -67,7 +67,7 @@ public class TelegramConfigTest {
 
         System.out.println("running tasks at capacity");
         //Executing task is not in the queue so we run +1 time
-        for (int i = 0; i < telegramClientConfig.maxMessageQueue + 1; i++) {
+        for (int i = 0; i < telegramClientConfig.MAX_MESSAGE_QUEUE + 1; i++) {
             testService.waitIndefinetely();
         }
         while (telegramLimitedCommandSender.getActiveCount() < 1)
@@ -102,6 +102,6 @@ public class TelegramConfigTest {
         }
         //+1 is to reach the maximum queue capacity.
         //+1 is for thread that is expected to be blocked.
-        assertEquals(telegramClientConfig.maxMessageQueue + 2, runCount.get());
+        assertEquals(telegramClientConfig.MAX_MESSAGE_QUEUE + 2, runCount.get());
     }
 }

@@ -9,8 +9,8 @@ import com.noname.duyuru.app.jpa.repositories.TopicRepository;
 import com.noname.duyuru.app.mvc.message.IViewMessage;
 import com.noname.duyuru.app.mvc.message.SuccessMessage;
 import com.noname.duyuru.app.service.telegram.TelegramService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,23 +29,13 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class AnnouncementService {
-	private static final Logger LOGGER = LogManager.getLogger(AnnouncementService.class);
-
 	private final SubscriptionRepository subscriptionRepository;
 	private final AnnouncementRepository announcementRepository;
 	private final TelegramService telegramService;
 	private final TopicRepository topicRepository;
-
-	public AnnouncementService(
-			SubscriptionRepository subscriptionRepository, AnnouncementRepository announcementRepository,
-			TelegramService telegramService, TopicRepository topicRepository
-	) {
-		this.subscriptionRepository = subscriptionRepository;
-		this.announcementRepository = announcementRepository;
-		this.telegramService = telegramService;
-		this.topicRepository = topicRepository;
-	}
 
 	public Page<Announcement> getAnnouncements(Pageable page) {
 		return announcementRepository.findAll(page);

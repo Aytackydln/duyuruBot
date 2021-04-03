@@ -10,7 +10,7 @@
     <groupId>fit.gjae.xkayad00</groupId>
     <artifactId>duyuru</artifactId>
     <packaging>war</packaging>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
     <name>Duyuru botu</name>
 
     <properties>
@@ -18,57 +18,59 @@
         <jsoup.version>1.12.1</jsoup.version>
     </properties>
 
-    <build>
-        <finalName>duyuru</finalName>
-        <plugins>
-			<plugin>
-				<groupId>org.hibernate.orm.tooling</groupId>
-				<artifactId>hibernate-enhance-maven-plugin</artifactId>
-				<version>${hibernate.version}</version>
-				<configuration>
-					<failOnError>true</failOnError>
-					<enableLazyInitialization>true</enableLazyInitialization>
-					<enableDirtyTracking>false</enableDirtyTracking>
-				</configuration>
-				<executions>
-					<execution>
-						<configuration>
-							<failOnError>true</failOnError>
-							<enableLazyInitialization>true</enableLazyInitialization>
-							<enableDirtyTracking>false</enableDirtyTracking>
-						</configuration>
-						<goals>
-							<goal>enhance</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+	<build>
+		<finalName>duyuru</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.hibernate.orm.tooling</groupId>
+					<artifactId>hibernate-enhance-maven-plugin</artifactId>
+					<version>${hibernate.version}</version>
+					<configuration>
+						<failOnError>true</failOnError>
+						<enableLazyInitialization>true</enableLazyInitialization>
+						<enableDirtyTracking>false</enableDirtyTracking>
+					</configuration>
+					<executions>
+						<execution>
+							<configuration>
+								<failOnError>true</failOnError>
+								<enableLazyInitialization>true</enableLazyInitialization>
+								<enableDirtyTracking>false</enableDirtyTracking>
+							</configuration>
+							<goals>
+								<goal>enhance</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludeDevtools>true</excludeDevtools>
-				</configuration>
-				<executions>
-					<execution>
-						<id>build-info</id>
-						<goals>
-							<goal>build-info</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<configuration>
+						<excludeDevtools>true</excludeDevtools>
+					</configuration>
+					<executions>
+						<execution>
+							<id>build-info</id>
+							<goals>
+								<goal>build-info</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>8</source>
-					<target>8</target>
-				</configuration>
-			</plugin>
-		</plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>11</source>
+						<target>11</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<dependencies>
@@ -132,6 +134,12 @@
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>${jsoup.version}</version>
+		</dependency>
+
+		<!-- lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
 

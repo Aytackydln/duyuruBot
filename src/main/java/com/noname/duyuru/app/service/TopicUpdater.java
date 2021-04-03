@@ -7,8 +7,8 @@ import com.noname.duyuru.app.jpa.repositories.TopicRepository;
 import com.noname.duyuru.app.mvc.message.IViewMessage;
 import com.noname.duyuru.app.mvc.message.SuccessMessage;
 import com.noname.duyuru.app.service.telegram.TelegramService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,18 +22,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class TopicUpdater {
-	private static final Logger LOGGER = LogManager.getLogger(TopicUpdater.class);
-
 	private final TopicRepository topicRepository;
 	private final DepartmentRepository departmentRepository;
 	private final TelegramService telegramService;
-
-	public TopicUpdater(TopicRepository topicRepository, DepartmentRepository departmentRepository, TelegramService telegramService) {
-		this.topicRepository = topicRepository;
-		this.departmentRepository = departmentRepository;
-		this.telegramService = telegramService;
-	}
 
 	public Collection<IViewMessage> updateTopics() {
 		final List<IViewMessage> result = new ArrayList<>();
