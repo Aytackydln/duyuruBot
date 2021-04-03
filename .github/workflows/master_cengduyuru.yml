@@ -31,5 +31,5 @@ jobs:
         application_name: duyuru
         environment_name: Duyuru-env
         region: eu-central-1
-        version_label: "duyuru-${{GITHUB_JOB}}"
+        version_label: "duyuru-${{env.GITHUB_JOB}}"
         deployment_package: target/duyuru.war
