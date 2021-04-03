@@ -31,5 +31,5 @@ jobs:
         application_name: duyuru
         environment_name: Duyuru-env
         region: eu-central-1
-        version_label: "duyuru-${{ steps.format-time.outputs.replaced }}"
+        version_label: "duyuru-${{steps.format-time.outputs.replaced}}"
         deployment_package: target/duyuru.war
