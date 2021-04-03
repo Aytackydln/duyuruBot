@@ -1,37 +1,25 @@
 package com.noname.duyuru.app.json.telegram.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.client.HttpClientErrorException;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Data
+@Log4j2
 public class DeleteMessage implements TelegramResponse {
-	private static final Logger LOGGER = LogManager.getLogger(DeleteMessage.class);
 
 	private final long chatId;
 	private final long messageId;
 
 	private boolean errorProcessed = false;
 
-	public DeleteMessage(final long chat_id, final long message_id) {
-		this.chatId = chat_id;
-		this.messageId = message_id;
-	}
-
 	@Override
 	public String getMethod() {
 		return "deleteMessage";
-	}
-
-	@JsonProperty("chat_id")
-	public long getChatId() {
-		return chatId;
-	}
-
-	@JsonProperty("message_id")
-	public long getMessageId() {
-		return messageId;
 	}
 
 	@Override
@@ -65,13 +53,5 @@ public class DeleteMessage implements TelegramResponse {
 	@Override
 	public void preSend() {
 		//doesn't need
-	}
-
-	@Override
-	public String toString() {
-		return "DeleteMessage{" +
-				"chatId=" + chatId +
-				", messageId=" + messageId +
-				'}';
 	}
 }

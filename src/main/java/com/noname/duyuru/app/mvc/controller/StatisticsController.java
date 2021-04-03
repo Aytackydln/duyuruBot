@@ -4,6 +4,7 @@ import com.noname.duyuru.app.jpa.models.User;
 import com.noname.duyuru.app.jpa.repositories.MessageRepository;
 import com.noname.duyuru.app.service.AnnouncementService;
 import com.noname.duyuru.app.service.SubscriptionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,16 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequiredArgsConstructor
 public class StatisticsController {
 	private final MessageRepository messageRepository;
 	private final AnnouncementService announcementService;
 	private final SubscriptionService subscriptionService;
-
-	StatisticsController(final MessageRepository messageRepository, final AnnouncementService announcementService, SubscriptionService subscriptionService) {
-		this.messageRepository = messageRepository;
-		this.announcementService = announcementService;
-		this.subscriptionService = subscriptionService;
-	}
 
 	@GetMapping("/messages")
 	public ModelAndView messages(final @PageableDefault(sort = "time", direction = Sort.Direction.DESC, size = 13) Pageable pageable) {

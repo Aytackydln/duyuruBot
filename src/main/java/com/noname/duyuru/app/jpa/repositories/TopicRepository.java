@@ -14,6 +14,5 @@ public interface TopicRepository extends PagingAndSortingRepository<Topic, Strin
 
     List<Topic> getByDepartmentIdNotNull();
 
-
     boolean existsByBoardAppend(String boardAppend);
 }

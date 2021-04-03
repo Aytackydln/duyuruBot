@@ -2,9 +2,8 @@ package com.noname.duyuru.app.service.telegram;
 
 import com.noname.duyuru.app.configuration.TelegramClientConfig;
 import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
-import com.noname.duyuru.app.setting.ConfigurationSet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,16 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@RequiredArgsConstructor
+@Log4j2
 public class CommandSenderService {
-	private static final Logger LOGGER = LogManager.getLogger(CommandSenderService.class);
 
 	private final RestTemplate telegramClient;
 	private final CommandObserverService commandObserverService;
-
-	public CommandSenderService(RestTemplate telegramClient, CommandObserverService commandObserverService, ConfigurationSet configurationSet) {
-		this.telegramClient = telegramClient;
-		this.commandObserverService = commandObserverService;
-	}
 
 	@Async(TelegramClientConfig.LIMITED_COMMAND_SENDER)
 	void sendLimitedResponse(TelegramResponse responseToSend) {

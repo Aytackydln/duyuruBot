@@ -5,6 +5,7 @@ import com.noname.duyuru.app.mvc.message.MessageBox;
 import com.noname.duyuru.app.service.ConfigurationService;
 import com.noname.duyuru.app.service.telegram.PollingService;
 import com.noname.duyuru.app.setting.ConfigurationSet;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,19 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class ConfigurationController {
 	private final ConfigurationSet configurationSet;
 	private final ConfigurationService configurationService;
 	private final PollingService pollingService;
 	private final MessageBox messageBox;
-
-	public ConfigurationController(ConfigurationSet configurationSet, ConfigurationService configurationService,
-			PollingService pollingService, MessageBox messageBox) {
-		this.configurationSet = configurationSet;
-		this.configurationService = configurationService;
-		this.pollingService = pollingService;
-		this.messageBox = messageBox;
-	}
 
 	@GetMapping("/")
 	public ModelAndView index(VersionKeeper versionKeeper) {

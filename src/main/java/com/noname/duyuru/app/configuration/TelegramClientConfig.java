@@ -1,8 +1,7 @@
 package com.noname.duyuru.app.configuration;
 
 import com.noname.duyuru.app.setting.ConfigurationSet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,10 +11,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableAsync
+@Log4j2
 public class TelegramClientConfig {
-	private static final Logger LOGGER = LogManager.getLogger(TelegramClientConfig.class);
-
-	public final int maxMessageQueue = 5;
+	public static final int MAX_MESSAGE_QUEUE = 5;
 	public static final String LIMITED_COMMAND_SENDER = "telegramLimitedCommandSender";
 	public static int maxCommandPerSecond = 30;
 
@@ -31,7 +29,7 @@ public class TelegramClientConfig {
 		limitedExecutor.setMaxPoolSize(1);
 		limitedExecutor.setWaitForTasksToCompleteOnShutdown(true);
 
-		limitedExecutor.setQueueCapacity(maxMessageQueue);
+		limitedExecutor.setQueueCapacity(MAX_MESSAGE_QUEUE);
 
 		//block caller when queue is full
 		limitedExecutor.setRejectedExecutionHandler(((runnable, executor) -> {
@@ -51,7 +49,7 @@ public class TelegramClientConfig {
 			try {
 				long waitMill = Math.max(1000 / maxCommandPerSecond - timeElapsed, 0);
 				Thread.sleep(waitMill);
-				LOGGER.debug("waited for " + waitMill + " milliseconds, elapsed " + timeElapsed);
+				LOGGER.debug("waited for {} milliseconds, elapsed {}", waitMill, timeElapsed);
 			} catch (InterruptedException ignored) {
 			}
 		}));

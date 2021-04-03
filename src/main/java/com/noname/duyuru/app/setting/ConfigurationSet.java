@@ -31,7 +31,7 @@ public interface ConfigurationSet{
 
 	void setWebhookEnabled(boolean enabled);
 
-	boolean isWebHookEnabled();
+	boolean isWebhookEnabled();
 
 	void setCleaningEnabled(boolean enabled);
 

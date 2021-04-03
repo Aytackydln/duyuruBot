@@ -3,21 +3,29 @@ package com.noname.duyuru.app.json.telegram.response;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.noname.duyuru.app.json.models.Keyboard;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.Data;
+import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Data
+@ToString(onlyExplicitlyIncluded = true)
+@Log4j2
 public class SendMessage implements TelegramResponse {
-	private static final Logger LOGGER = LogManager.getLogger(SendMessage.class);
 
+	@ToString.Include
 	private final long chatId;
+
+	@ToString.Include
 	private String text;
 	private boolean disableNotification;
 	private Keyboard replyMarkup;
@@ -43,39 +51,9 @@ public class SendMessage implements TelegramResponse {
 		return "sendMessage";
 	}
 
-	@JsonProperty("parse_mode")
+	@JsonProperty
 	public String getParseMode() {
 		return "HTML";
-	}
-
-	@JsonProperty("chat_id")
-	public long getChatId() {
-		return chatId;
-	}
-
-	@JsonProperty("text")
-	public String getText() {
-		return text;
-	}
-
-	@JsonProperty("text")
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	@JsonProperty("disable_notification")
-	public boolean isDisableNotification() {
-		return disableNotification;
-	}
-
-	@JsonProperty("reply_markup")
-	public Keyboard getReplyMarkup() {
-		return replyMarkup;
-	}
-
-	@JsonProperty("reply_markup")
-	public void setReplyMarkup(Keyboard replyMarkup) {
-		this.replyMarkup = replyMarkup;
 	}
 
 	@Override
@@ -103,7 +81,7 @@ public class SendMessage implements TelegramResponse {
 					return null;
 			}
 		} catch (ResourceAccessException rae) {
-			LOGGER.error(rae);
+			LOGGER.error("Error while handling", rae);
 			try {
 				Thread.sleep(10000);    //TODO handle infinite loop?
 			} catch (InterruptedException ignored) {
@@ -122,19 +100,11 @@ public class SendMessage implements TelegramResponse {
 	@Override
 	public void preSend() {
 		//dont make notification sound between 00:00-07:00
-		final Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+		final Calendar calendar = Calendar.getInstance(); // creates a new calendar instance
 		calendar.setTime(new Date());   // assigns calendar to given date
 		final int hour = calendar.get(Calendar.HOUR_OF_DAY);
 		if (hour < 7) {
 			silent();
 		}
-	}
-
-	@Override
-	public String toString() {
-		return "SendMessage{" +
-				"chatId=" + chatId +
-				", text='" + text + '\'' +
-				'}';
 	}
 }

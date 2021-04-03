@@ -3,42 +3,45 @@ package com.noname.duyuru.app.setting;
 import com.noname.duyuru.app.jpa.models.Configuration;
 import com.noname.duyuru.app.jpa.models.User;
 import com.noname.duyuru.app.jpa.repositories.ConfigurationRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
 
+@Getter
+@Setter
+@Log4j2
 public class PerformantConfigurationSet implements ConfigurationSet {
-    private static final Logger LOGGER = LogManager.getLogger(PerformantConfigurationSet.class);
-    private final ConfigurationRepository configurationRepository;
+	private final ConfigurationRepository configurationRepository;
 
-    private boolean announcementCheckEnabled = true;
-    private String hookToken;
-    private String certificate;
-    private boolean webhookEnabled;
+	private boolean announcementCheckEnabled = true;
+	private String webhookToken;
+	private String certificate;
+	private boolean webhookEnabled;
 
-    private final String botToken;
-    private final long masterChatId;
-    private final User master;
+	private final String botToken;
+	private final long masterChatId;
+	private final User master;
 	private final String defaultLanguage;
-	private String webHookUrl;
+	private String webhookUrl;
 	private boolean cleaningEnabled;
 
-	private final int threadCount;
+	private final int threads;
 
-	public PerformantConfigurationSet(final ConfigurationRepository configurationRepository){
-		this.configurationRepository=configurationRepository;
-		threadCount=Runtime.getRuntime().availableProcessors();
+	public PerformantConfigurationSet(final ConfigurationRepository configurationRepository) {
+		this.configurationRepository = configurationRepository;
+		threads = Runtime.getRuntime().availableProcessors();
 
-		final Optional<Configuration> defaultLanguageOption=configurationRepository.findById("defaultLanguage");
-		final Optional<Configuration> masterChatIdOption=configurationRepository.findById("masterChatId");
-		final Optional<Configuration> botTokenOption=configurationRepository.findById("botToken");
+		final Optional<Configuration> defaultLanguageOption = configurationRepository.findById("defaultLanguage");
+		final Optional<Configuration> masterChatIdOption = configurationRepository.findById("masterChatId");
+		final Optional<Configuration> botTokenOption = configurationRepository.findById("botToken");
 
-		if(masterChatIdOption.isPresent()){
-			this.masterChatId=Long.valueOf(masterChatIdOption.get().getValue());
-			master=new User();
+		if (masterChatIdOption.isPresent()) {
+			this.masterChatId = Long.valueOf(masterChatIdOption.get().getValue());
+			master = new User();
 			master.setId(this.masterChatId);
-		}else{
+		} else {
 			this.masterChatId=0;
 			master=new User();
 			LOGGER.error("'masterChatId' configuration does not exist.");
@@ -58,31 +61,6 @@ public class PerformantConfigurationSet implements ConfigurationSet {
 	}
 
 	@Override
-	public final boolean isAnnouncementCheckEnabled(){
-		return announcementCheckEnabled;
-	}
-
-	@Override
-	public final String getBotToken(){
-		return botToken;
-	}
-
-	@Override
-	public final long getMasterChatId(){
-		return masterChatId;
-	}
-
-	@Override
-	public final User getMaster(){
-		return master;
-	}
-
-	@Override
-	public final String getDefaultLanguage(){
-		return defaultLanguage;
-	}
-
-	@Override
 	public final void enableAnnouncementCheck(){
 		announcementCheckEnabled=true;
 	}
@@ -90,31 +68,6 @@ public class PerformantConfigurationSet implements ConfigurationSet {
 	@Override
 	public final void disableAnnouncementCheck(){
 		announcementCheckEnabled=false;
-	}
-
-	@Override
-	public final String getWebhookUrl(){
-		return webHookUrl;
-	}
-
-	@Override
-	public final void setWebhookToken(final String token){
-		hookToken=token;
-	}
-
-	@Override
-	public final String getWebhookToken(){
-		return hookToken;
-	}
-
-	@Override
-	public final void setCertificate(final String certificate){
-		this.certificate=certificate;
-	}
-
-	@Override
-	public final String getCertificate(){
-		return certificate;
 	}
 
 	@Override
@@ -147,35 +100,5 @@ public class PerformantConfigurationSet implements ConfigurationSet {
 	@Override
 	public final String getType(){
 		return "performant";
-	}
-
-	@Override
-	public final void setWebhookUrl(final String webhookUrl){
-		this.webHookUrl=webhookUrl;
-	}
-
-	@Override
-	public final int getThreads(){
-		return threadCount;
-	}
-
-	@Override
-	public void setWebhookEnabled(boolean enabled){
-		webhookEnabled=enabled;
-	}
-
-	@Override
-	public boolean isWebHookEnabled(){
-		return webhookEnabled;
-	}
-
-	@Override
-	public void setCleaningEnabled(boolean cleaningEnabled){
-		this.cleaningEnabled=cleaningEnabled;
-	}
-
-	@Override
-	public boolean isCleaningEnabled(){
-		return cleaningEnabled;
 	}
 }

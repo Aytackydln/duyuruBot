@@ -1,41 +1,18 @@
 package com.noname.duyuru.app.json.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.noname.duyuru.app.jpa.models.Message;
 import com.noname.duyuru.app.jpa.models.User;
+import lombok.Data;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Data
 public class Update{
 	private int updateId;
 	private Message message;
 	private CallbackQuery callbackQuery;
-
-	@JsonProperty("update_id")
-	public int getUpdateId(){
-		return updateId;
-	}
-
-	public void setUpdateId(int updateId){
-		this.updateId=updateId;
-	}
-
-	@JsonProperty("message")
-	public Message getMessage(){
-		return message;
-	}
-
-	public void setMessage(Message message){
-		this.message=message;
-	}
-
-	@JsonProperty("callback_query")
-	public CallbackQuery getCallbackQuery(){
-		return callbackQuery;
-	}
-
-	public void setCallbackQuery(CallbackQuery callbackQuery){
-		this.callbackQuery=callbackQuery;
-	}
 
 	@JsonIgnore
 	public User getUser(){

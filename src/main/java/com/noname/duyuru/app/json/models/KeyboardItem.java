@@ -1,7 +1,13 @@
 package com.noname.duyuru.app.json.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Data
+@AllArgsConstructor
 public class KeyboardItem{
 	private String text;
 	private String callbackData;
@@ -10,30 +16,7 @@ public class KeyboardItem{
 		this.text=text;
 	}
 
-	public KeyboardItem(String text, String callbackData){
-		this.text=text;
-		this.callbackData=callbackData;
-	}
-
 	public String getJson(){
 		return "[{ \"text\": \""+text+"\", \"callback_data\": \""+callbackData+"\" }],";
-	}
-
-	@JsonProperty("text")
-	public String getText(){
-		return text;
-	}
-
-	public void setText(String text){
-		this.text=text;
-	}
-
-	@JsonProperty("callback_data")
-	public String getCallbackData(){
-		return callbackData;
-	}
-
-	public void setCallbackData(String callbackData){
-		this.callbackData=callbackData;
 	}
 }

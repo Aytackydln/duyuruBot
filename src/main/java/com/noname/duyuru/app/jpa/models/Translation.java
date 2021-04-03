@@ -1,43 +1,29 @@
 package com.noname.duyuru.app.jpa.models;
 
+import lombok.*;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Transient;
-import java.util.Objects;
+import java.io.Serializable;
 
 @Entity
-@IdClass(TranslationKey.class)
+@IdClass(Translation.Key.class)
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Translation {
-    private final TranslationKey id = new TranslationKey();
+    private final Translation.Key id = new Translation.Key();
     private String language;
     private String sentence;
     private String text;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Translation that = (Translation) o;
-        return getId().equals(that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
     @Transient
-    public TranslationKey getId() {
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    public Translation.Key getId() {
         return id;
-    }
-
-    @Override
-    public String toString() {
-        return "Translation{" +
-                "id=" + id +
-                ", text='" + text + '\'' +
-                '}';
     }
 
     @Id
@@ -60,11 +46,15 @@ public class Translation {
         this.sentence = sentence;
     }
 
+    @ToString.Include
     public String getText() {
-		return text;
-	}
+        return text;
+    }
 
-	public void setText(String text){
-		this.text=text;
-	}
+    @Data
+    @Setter(AccessLevel.PRIVATE)
+    public static class Key implements Serializable {
+        private String language;
+        private String sentence;
+    }
 }

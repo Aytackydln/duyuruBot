@@ -22,7 +22,6 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter{
 		httpSecurity.csrf().and()
 				.authorizeRequests().anyRequest().authenticated().and()
 				.httpBasic();
-
 	}
 	@Override
 	public void configure(WebSecurity web) {
@@ -34,7 +33,8 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter{
 		auth.jdbcAuthentication()
 				.dataSource(dataSource)
 				.usersByUsernameQuery("select username,password, enabled from logins where username=?")
-				.authoritiesByUsernameQuery("select username, authority from authorities where username=?");
+				.authoritiesByUsernameQuery("select username, authority from authorities where username=?")
+				.passwordEncoder(passwordEncoder());
 	}
 
 	@Bean

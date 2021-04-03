@@ -1,10 +1,13 @@
 package com.noname.duyuru.app.json.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class InlineKeyboard implements Keyboard {
     private final List<List<KeyboardItem>> content = new ArrayList<>();
 
@@ -13,14 +16,14 @@ public class InlineKeyboard implements Keyboard {
         return content;
     }
 
-    @JsonProperty("one_time_keyboard")
+    @JsonProperty
     public boolean isOneTimeKeyboard() {
         return true;
     }
 
-	public List<KeyboardItem> addRow(){
-		List<KeyboardItem> newList=new ArrayList<>();
-		content.add(newList);
-		return newList;
-	}
+    public List<KeyboardItem> addRow(){
+        List<KeyboardItem> newList=new ArrayList<>();
+        content.add(newList);
+        return newList;
+    }
 }

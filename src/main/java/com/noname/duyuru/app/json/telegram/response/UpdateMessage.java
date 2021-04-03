@@ -1,8 +1,13 @@
 package com.noname.duyuru.app.json.telegram.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.noname.duyuru.app.json.models.Keyboard;
+import lombok.Data;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Data
 public class UpdateMessage implements TelegramResponse {
     private long chatId;
     private long messageId;
@@ -14,48 +19,9 @@ public class UpdateMessage implements TelegramResponse {
         return "editMessageText";
     }
 
-    @JsonProperty("chat_id")
-    public long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(long chatId) {
-        this.chatId = chatId;
-    }
-
-    @JsonProperty("message_id")
-    public long getMessageId() {
-        return messageId;
-    }
-
-    @JsonProperty("message_id")
-    public void setMessageId(long messageId) {
-        this.messageId = messageId;
-    }
-
-    @JsonProperty("text")
-    public String getText() {
-        return text;
-    }
-
-    @JsonProperty("text")
-    public void setText(String text) {
-        this.text = text;
-    }
-
     @JsonProperty("parse_mode")
     public String getParseMode() {
         return "HTML";
-    }
-
-    @JsonProperty("reply_markup")
-    public Keyboard getReplyMarkup() {
-        return replyMarkup;
-    }
-
-    @JsonProperty("reply_markup")
-    public void setReplyMarkup(Keyboard replyMarkup) {
-        this.replyMarkup = replyMarkup;
     }
 
     @Override

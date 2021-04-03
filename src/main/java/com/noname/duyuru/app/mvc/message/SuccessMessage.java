@@ -1,11 +1,10 @@
 package com.noname.duyuru.app.mvc.message;
 
-public class SuccessMessage implements IViewMessage {
-	private final String message;
+import lombok.Value;
 
-	public SuccessMessage(String message) {
-		this.message = message;
-	}
+@Value
+public class SuccessMessage implements IViewMessage {
+	String message;
 
 	@Override
 	public final String getHtmlClass() {
@@ -15,10 +14,5 @@ public class SuccessMessage implements IViewMessage {
 	@Override
 	public String getHeader() {
 		return "Success!";
-	}
-
-	@Override
-	public String getMessage() {
-		return message;
 	}
 }

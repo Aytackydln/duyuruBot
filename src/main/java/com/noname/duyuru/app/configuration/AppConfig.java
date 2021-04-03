@@ -6,8 +6,7 @@ import com.noname.duyuru.app.json.models.KeyboardItem;
 import com.noname.duyuru.app.setting.ConfigurationSet;
 import com.noname.duyuru.app.setting.DynamicConfigurationSet;
 import com.noname.duyuru.app.setting.PerformantConfigurationSet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Configuration
+@Log4j2
 public class AppConfig{
-	private static final Logger LOGGER = LogManager.getLogger(AppConfig.class);
 
 	@Bean
 	public ConfigurationSet configurationSet(final ConfigurationRepository configurationRepository){

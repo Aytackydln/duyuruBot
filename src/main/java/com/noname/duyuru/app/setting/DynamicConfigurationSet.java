@@ -3,32 +3,34 @@ package com.noname.duyuru.app.setting;
 import com.noname.duyuru.app.jpa.models.Configuration;
 import com.noname.duyuru.app.jpa.models.User;
 import com.noname.duyuru.app.jpa.repositories.ConfigurationRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
 
+@Log4j2
+@Getter
+@Setter
 public class DynamicConfigurationSet implements ConfigurationSet {
-    private static final Logger LOGGER = LogManager.getLogger(DynamicConfigurationSet.class);
+	private boolean announcementCheckEnabled = true;
+	private String webhookToken;
+	private String certificate;
+	private boolean webhookEnabled;
 
-    private boolean announcementCheckEnabled = true;
-    private String hookToken;
-    private String certificate;
-    private boolean webhookEnabled;
-
-    private String botToken;
-    private long masterChatId;
-    private User master;
-    private String defaultLanguage;
-	private String webHookUrl;
+	private String botToken;
+	private long masterChatId;
+	private User master;
+	private String defaultLanguage;
+	private String webhookUrl;
 	private boolean cleaningEnabled;
 
 	private final ConfigurationRepository configurationRepository;
 	private final int threads;
 
-	public DynamicConfigurationSet(ConfigurationRepository configurationRepository){
-		this.configurationRepository=configurationRepository;
-		threads=Runtime.getRuntime().availableProcessors();
+	public DynamicConfigurationSet(ConfigurationRepository configurationRepository) {
+		this.configurationRepository = configurationRepository;
+		threads = Runtime.getRuntime().availableProcessors();
 		reload();
 	}
 
@@ -62,10 +64,10 @@ public class DynamicConfigurationSet implements ConfigurationSet {
 			LOGGER.info("No default language is set by 'defaultLanguage'. Using 'en' as defaultLanguage");
 		}
 		if (webHookUrlOption.isPresent()) {
-			this.webHookUrl = webHookUrlOption.get().getValue();
+			this.webhookUrl = webHookUrlOption.get().getValue();
 		} else {
-			this.webHookUrl="";
-			this.hookToken="";
+			this.webhookUrl = "";
+			this.webhookToken = "";
 			LOGGER.info("'webHookUrl is not set. Not using webhook at start");
 		}
 		if(certificateOption.isPresent()){
@@ -88,41 +90,6 @@ public class DynamicConfigurationSet implements ConfigurationSet {
 	}
 
 	@Override
-	public void setWebhookUrl(String webhookUrl) {
-		this.webHookUrl = webhookUrl;
-	}
-
-	@Override
-	public int getThreads() {
-		return threads;
-	}
-
-	@Override
-	public boolean isAnnouncementCheckEnabled() {
-		return announcementCheckEnabled;
-	}
-
-	@Override
-	public String getBotToken() {
-		return botToken;
-	}
-
-	@Override
-	public long getMasterChatId() {
-		return masterChatId;
-	}
-
-	@Override
-	public User getMaster() {
-		return master;
-	}
-
-	@Override
-	public String getDefaultLanguage() {
-		return defaultLanguage;
-	}
-
-	@Override
 	public void enableAnnouncementCheck() {
 		announcementCheckEnabled = true;
 	}
@@ -130,50 +97,5 @@ public class DynamicConfigurationSet implements ConfigurationSet {
 	@Override
 	public void disableAnnouncementCheck() {
 		announcementCheckEnabled = false;
-	}
-
-	@Override
-	public String getWebhookUrl() {
-		return webHookUrl;
-	}
-
-	@Override
-	public void setWebhookToken(String token) {
-		hookToken = token;
-	}
-
-	@Override
-	public String getWebhookToken() {
-		return hookToken;
-	}
-
-	@Override
-	public void setCertificate(final String certificate) {
-		this.certificate = certificate;
-	}
-
-	@Override
-	public String getCertificate() {
-		return certificate;
-	}
-
-	@Override
-	public void setWebhookEnabled(boolean enabled){
-		webhookEnabled=enabled;
-	}
-
-	@Override
-	public boolean isWebHookEnabled(){
-		return webhookEnabled;
-	}
-
-	@Override
-	public void setCleaningEnabled(boolean cleaningEnabled){
-		this.cleaningEnabled=cleaningEnabled;
-	}
-
-	@Override
-	public boolean isCleaningEnabled(){
-		return cleaningEnabled;
 	}
 }

@@ -4,6 +4,7 @@ import com.noname.duyuru.app.service.AnnouncementService;
 import com.noname.duyuru.app.service.SubscriptionService;
 import com.noname.duyuru.app.service.TopicUpdater;
 import com.noname.duyuru.app.setting.ConfigurationSet;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -12,20 +13,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
 @EnableScheduling
+@RequiredArgsConstructor
 public class ScheduleConfiguration {
-
 	private final ConfigurationSet configurationSet;
 	private final AnnouncementService announcementService;
 	private final SubscriptionService subscriptionService;
 	private final TopicUpdater topicUpdater;
-
-	public ScheduleConfiguration(ConfigurationSet configurationSet, AnnouncementService announcementService,
-								 SubscriptionService subscriptionService, TopicUpdater topicUpdater) {
-		this.configurationSet = configurationSet;
-		this.announcementService = announcementService;
-		this.subscriptionService = subscriptionService;
-		this.topicUpdater = topicUpdater;
-	}
 
 	@Bean(name="taskScheduler", destroyMethod="shutdown")
 	public ThreadPoolTaskScheduler taskExecutor(){

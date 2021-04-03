@@ -6,27 +6,20 @@ import com.noname.duyuru.app.service.AnnouncementService;
 import com.noname.duyuru.app.service.SubscriptionService;
 import com.noname.duyuru.app.service.TopicUpdater;
 import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Collection;
 
 @Controller
+@RequiredArgsConstructor
 public class JobController {
 	private final TopicUpdater topicUpdater;
 	private final MessageBox messageBox;
 	private final DictionaryKeeper dictionaryKeeper;
 	private final AnnouncementService announcementService;
 	private final SubscriptionService subscriptionService;
-
-	public JobController(TopicUpdater topicUpdater, MessageBox messageBox,
-						 DictionaryKeeper dictionaryKeeper, AnnouncementService announcementService, SubscriptionService subscriptionService) {
-		this.topicUpdater = topicUpdater;
-		this.messageBox = messageBox;
-		this.dictionaryKeeper = dictionaryKeeper;
-		this.announcementService = announcementService;
-		this.subscriptionService = subscriptionService;
-	}
 
 	@GetMapping("/updateTopics")
 	public String updateTopics() {

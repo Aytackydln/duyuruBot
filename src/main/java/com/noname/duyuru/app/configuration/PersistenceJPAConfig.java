@@ -1,7 +1,6 @@
 package com.noname.duyuru.app.configuration;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -12,8 +11,8 @@ import java.net.ConnectException;
 
 @Configuration
 @EnableJpaRepositories("com.noname.duyuru.app.jpa.repositories")
+@Log4j2
 public class PersistenceJPAConfig{
-	private static final Logger LOGGER = LogManager.getLogger(PersistenceJPAConfig.class);
 
 	@ExceptionHandler(ConnectException.class)
 	public void connectionExceptionHandle(){
