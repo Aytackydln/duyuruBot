@@ -25,7 +25,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter{
 	}
 	@Override
 	public void configure(WebSecurity web) {
-		web.ignoring().antMatchers("/webhook/**");
+		web.ignoring().antMatchers("/webhook/**", "/actuator/health");
 	}
 
 	@Autowired
