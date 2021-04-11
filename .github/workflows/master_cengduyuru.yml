@@ -36,7 +36,7 @@ jobs:
         aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
         aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
         application_name: duyuru
-        environment_name: Duyuru-env
+        environment_name: Duyuru-env-1
         region: eu-central-1
         version_label: "duyuru-${{steps.buildnumber.outputs.build_number}}"
         deployment_package: target/duyuru.war
