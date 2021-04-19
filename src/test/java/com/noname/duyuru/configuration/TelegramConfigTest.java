@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = {
         TelegramClientConfig.class, RestTemplateConfig.class, TelegramConfigTest.TestService.class
 })
-public class TelegramConfigTest {
+class TelegramConfigTest {
 
     @MockBean
     ConfigurationSet configurationSet;
@@ -61,18 +61,18 @@ public class TelegramConfigTest {
 
     @Test
     @Timeout(value = 5)
-    public void fullMessageQueueWaits() throws InterruptedException {
+    void fullMessageQueueWaits() throws InterruptedException {
         //given
         TelegramClientConfig.maxCommandPerSecond = Integer.MAX_VALUE; //needed, also makes test faster
 
         System.out.println("running tasks at capacity");
         //Executing task is not in the queue so we run +1 time
-        for (int i = 0; i < telegramClientConfig.MAX_MESSAGE_QUEUE + 1; i++) {
+        for (int i = 0; i < TelegramClientConfig.MAX_MESSAGE_QUEUE + 1; i++) {
             testService.waitIndefinetely();
         }
         while (telegramLimitedCommandSender.getActiveCount() < 1)
             Thread.yield();
-        Thread.sleep(1);
+        Thread.sleep(5);
 
         System.out.println("checking task counts");
         assertEquals(1, runCount.get(), "First task did not start yet");
@@ -102,6 +102,6 @@ public class TelegramConfigTest {
         }
         //+1 is to reach the maximum queue capacity.
         //+1 is for thread that is expected to be blocked.
-        assertEquals(telegramClientConfig.MAX_MESSAGE_QUEUE + 2, runCount.get());
+        assertEquals(TelegramClientConfig.MAX_MESSAGE_QUEUE + 2, runCount.get());
     }
 }

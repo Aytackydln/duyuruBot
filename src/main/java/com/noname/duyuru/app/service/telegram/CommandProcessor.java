@@ -10,6 +10,7 @@ import com.noname.duyuru.app.jpa.repositories.TopicRepository;
 import com.noname.duyuru.app.json.models.*;
 import com.noname.duyuru.app.json.telegram.response.SendMessage;
 import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
+import com.noname.duyuru.app.json.telegram.response.UpdateMessage;
 import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -57,10 +58,9 @@ public class CommandProcessor {
 				return new SendMessage(user.getId(), translate(user, "REQUEST_ERROR"));
 			}
 
-			telegramService.deleteMessage(user, message.getMessageId());  //TODO future ile silinip silinmediğine bak
-
 			//check cancel button
 			if (data.equals(CANCEL_STRING)) {
+				telegramService.deleteMessage(user, message.getMessageId());
 				return listSubscriptions(user);
 			}
 
@@ -70,12 +70,13 @@ public class CommandProcessor {
 			final String parameter = commandAndParameter[1];
 			switch (command) {
 				case SUBSCRIBE_KEYWORD:
-					return subscribe(callbackQuery, parameter);
+					return new UpdateMessage(message.getMessageId(), subscribe(callbackQuery, parameter));
 				case UNSUBSCRIBE_KEYWORD:
-					return unsubscribe(callbackQuery, parameter);
+					return new UpdateMessage(message.getMessageId(), unsubscribe(callbackQuery, parameter));
 				default:
 					LOGGER.error("unknown operation {}", command);
-					return new SendMessage(user.getId(), translate(user, "REQUEST_ERROR") + "(unknown operation)");
+					return new UpdateMessage(message.getMessageId(),
+							new SendMessage(user.getId(), translate(user, "REQUEST_ERROR") + "(unknown operation)"));
 			}
 		} else {
 			message = update.getMessage();
@@ -163,14 +164,14 @@ public class CommandProcessor {
 		return new SendMessage(user.getId(), translate(user, "UNSUBSCRIBE_LIST_HEADER")).keyboard(inlineKeyboard);
 	}
 
-	private TelegramResponse subscribe(final CallbackQuery query, final String topic) {
+	private SendMessage subscribe(final CallbackQuery query, final String topic) {
 		final User user = query.getFrom();
 
 		try {
 			subscribe(user, topic);
 
-			telegramService.sendCommand(listTopicsToSubscribe(user));
-			return new SendMessage(user.getId(), topic + " -> " + translate(user, "SUBSCRIBE_SUCCESS"));
+			telegramService.sendCommand(new SendMessage(user.getId(), topic + " -> " + translate(user, "SUBSCRIBE_SUCCESS")));
+			return listTopicsToSubscribe(user);
 		} catch (JpaObjectRetrievalFailureException e) {
 			LOGGER.error("attempted to subscribe non-existing {}", topic);
 			return new SendMessage(user.getId(),
@@ -195,7 +196,7 @@ public class CommandProcessor {
 		subscriptionRepository.save(subscription);
 	}
 
-	private TelegramResponse unsubscribe(final CallbackQuery query, final String topic) {
+	private SendMessage unsubscribe(final CallbackQuery query, final String topic) {
 		final User user = query.getFrom();
 
 		final Subscription subscription = new Subscription();
@@ -208,8 +209,8 @@ public class CommandProcessor {
 		try {
 			subscriptionRepository.delete(subscription);
 
-			telegramService.sendCommand(listTopicsToUnsubscribe(user));
-			return new SendMessage(user.getId(), topic + " -> " + translate(user, "UNSUBSCRIBE_SUCCESS"));
+			telegramService.sendCommand(new SendMessage(user.getId(), topic + " -> " + translate(user, "UNSUBSCRIBE_SUCCESS")));
+			return listTopicsToUnsubscribe(user);
 		} catch (Exception e) {
 			LOGGER.error("Unhandled error in unsubscribe method", e);
 			return new SendMessage(user.getId(), topic + " -> " + translate(user, "UNSUBSCRIBE_FAIL"));

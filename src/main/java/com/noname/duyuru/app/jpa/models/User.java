@@ -2,6 +2,8 @@ package com.noname.duyuru.app.jpa.models;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 
@@ -12,16 +14,17 @@ import java.util.List;
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Setter
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class User implements Serializable {
     private long id;
     private String firstName;
     private String lastName;
     private String username;
     private String language;
+    private String status;
     private List<Subscription> subscriptions;
 
     @Id
-    @JsonAlias("id")
     @EqualsAndHashCode.Include
     public long getId() {
         return id;
@@ -38,7 +41,6 @@ public class User implements Serializable {
     }
 
     @Column(name = "last_name")
-    @JsonAlias("last_name")
     public String getLastName() {
         return lastName;
     }
@@ -54,9 +56,12 @@ public class User implements Serializable {
     }
 
     @Column(name = "language")
-    @JsonAlias("language_code")
     public String getLanguage() {
         return language;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})

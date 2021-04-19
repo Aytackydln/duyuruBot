@@ -47,7 +47,7 @@ public class SendMessage implements TelegramResponse {
 		return this;
 	}
 
-	public final String getMethod() {
+	public String getMethod() {
 		return "sendMessage";
 	}
 

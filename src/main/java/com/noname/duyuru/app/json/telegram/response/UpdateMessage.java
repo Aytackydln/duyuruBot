@@ -1,27 +1,29 @@
 package com.noname.duyuru.app.json.telegram.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.noname.duyuru.app.json.models.Keyboard;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @Data
+@AllArgsConstructor
+@ToString
 public class UpdateMessage implements TelegramResponse {
-    private long chatId;
     private long messageId;
-    private String text;
-    private Keyboard replyMarkup;
+
+    private SendMessage sendMessage;
+
+    @JsonUnwrapped
+    public SendMessage getSendMessage() {
+        return sendMessage;
+    }
 
     @Override
     public String getMethod() {
         return "editMessageText";
-    }
-
-    @JsonProperty("parse_mode")
-    public String getParseMode() {
-        return "HTML";
     }
 
     @Override
