@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 @Setter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class User implements Serializable {
@@ -46,11 +48,13 @@ public class User implements Serializable {
     }
 
     @Transient
+    @ToString.Include
     public String getFullName() {
         return getFirstName() + " " + getLastName();
     }
 
     @JsonProperty("username")
+    @ToString.Include
     public String getUsername() {
         return username;
     }

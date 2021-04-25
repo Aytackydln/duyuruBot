@@ -24,7 +24,7 @@ public class ConfigurationController {
 
 	@GetMapping("/")
 	public ModelAndView index(VersionKeeper versionKeeper) {
-		ModelAndView mv = new ModelAndView("index");
+		var mv = new ModelAndView("index");
 		mv.addObject("configuration", configurationSet);
 		mv.addObject("versionKeeper", versionKeeper);
 		return mv;

@@ -38,7 +38,7 @@ public class TelegramService implements DisposableBean {
     }
 
     public void sendMessage(final User user, final String message) {
-        final SendMessage sendMessage = new SendMessage(user.getId(), message);
+        final var sendMessage = new SendMessage(user.getId(), message);
         sendCommand(sendMessage);
     }
 

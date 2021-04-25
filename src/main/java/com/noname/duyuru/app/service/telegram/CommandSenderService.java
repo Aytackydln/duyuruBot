@@ -31,17 +31,17 @@ public class CommandSenderService {
 	}
 
 	private void submitResponse(TelegramResponse responseToSend) {
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-		responseToSend.preSend();
+        responseToSend.preSend();
 
-		final HttpEntity<TelegramResponse> request = new HttpEntity<>(responseToSend, headers);
-		try {
-			telegramClient.postForEntity("/" + responseToSend.getMethod(), request, String.class);
-		} catch (Exception e) {
-			TelegramResponse errorResponse = responseToSend.onError(e);
-			if (errorResponse != null)
+        final HttpEntity<TelegramResponse> request = new HttpEntity<>(responseToSend, headers);
+        try {
+            telegramClient.postForEntity("/" + responseToSend.getMethod(), request, String.class);
+        } catch (Exception e) {
+            TelegramResponse errorResponse = responseToSend.onError(e);
+            if (errorResponse != null)
 				commandObserverService.addCommand(errorResponse);
 		}
 	}
