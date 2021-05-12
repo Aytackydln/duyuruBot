@@ -16,21 +16,21 @@ import org.springframework.web.client.RestTemplate;
 @Log4j2
 public class CommandSenderService {
 
-	private final RestTemplate telegramClient;
-	private final CommandObserverService commandObserverService;
+    private final RestTemplate telegramClient;
+    private final CommandObserverService commandObserverService;
 
-	@Async(TelegramClientConfig.LIMITED_COMMAND_SENDER)
-	void sendLimitedResponse(TelegramResponse responseToSend) {
-		LOGGER.debug("sending limited telegram command");
-		submitResponse(responseToSend);
-	}
+    @Async(TelegramClientConfig.LIMITED_COMMAND_SENDER)
+    void sendLimitedResponse(TelegramResponse responseToSend) {
+        LOGGER.debug("sending limited telegram command");
+        submitResponse(responseToSend);
+    }
 
-	@Async
-	void submitResponseAsync(TelegramResponse responseToSend) {
-		submitResponse(responseToSend);
-	}
+    @Async
+    void submitResponseAsync(TelegramResponse responseToSend) {
+        submitResponse(responseToSend);
+    }
 
-	private void submitResponse(TelegramResponse responseToSend) {
+    private void submitResponse(TelegramResponse responseToSend) {
         final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -42,7 +42,7 @@ public class CommandSenderService {
         } catch (Exception e) {
             TelegramResponse errorResponse = responseToSend.onError(e);
             if (errorResponse != null)
-				commandObserverService.addCommand(errorResponse);
-		}
-	}
+                commandObserverService.addCommand(errorResponse);
+        }
+    }
 }

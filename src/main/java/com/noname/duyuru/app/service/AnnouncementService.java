@@ -6,10 +6,11 @@ import com.noname.duyuru.app.jpa.models.Topic;
 import com.noname.duyuru.app.jpa.repositories.AnnouncementRepository;
 import com.noname.duyuru.app.jpa.repositories.SubscriptionRepository;
 import com.noname.duyuru.app.jpa.repositories.TopicRepository;
-import com.noname.duyuru.app.mvc.message.IViewMessage;
 import com.noname.duyuru.app.mvc.message.SuccessMessage;
+import com.noname.duyuru.app.mvc.message.ViewMessage;
 import com.noname.duyuru.app.service.telegram.TelegramService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,7 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class AnnouncementService {
 		return announcementRepository.findAll(page);
 	}
 
-	public IViewMessage clearAnnouncements() {
+	public ViewMessage clearAnnouncements() {
 		List<Announcement> clearedAnnouncements = new ArrayList<>();
 		for (Topic topic : topicRepository.getByDepartmentIdNotNull()) {
 			clearedAnnouncements.addAll(clearAnnouncements(topic));
@@ -76,7 +77,8 @@ public class AnnouncementService {
 	}
 
 	@Async
-	void checkAnnouncements(final Topic topic) throws IOException {
+	@SneakyThrows
+	void checkAnnouncements(final Topic topic) {
 		final Document doc = Jsoup.connect(topic.getAnnouncementLink()).get();
 		final Elements links = doc.select(topic.getAnnSelector());
 		LOGGER.debug("{} links are going to be checked with general method", links.size());
@@ -88,7 +90,7 @@ public class AnnouncementService {
 		for (final Element link : links) {
 			try {
 				//TODO Announcement builder from html element
-				final Announcement announcement = buildAnnouncement(topic, link);
+				var announcement = buildAnnouncement(topic, link);
 				announcement.setDate(new Date());
 
 				if (!announcementRepository.existsById(announcement.getId())) {
@@ -102,14 +104,14 @@ public class AnnouncementService {
 	}
 
 	private Announcement buildAnnouncement(Topic topic, Element htmlElement) {
-		final Announcement announcement = new Announcement();
-		if (StringUtils.isEmpty(topic.getAnnTitleSelector())) {
+		var announcement = new Announcement();
+		if (ObjectUtils.isEmpty(topic.getAnnTitleSelector())) {
 			announcement.setTitle(htmlElement.html());
 		} else {
 			announcement.setTitle(htmlElement.selectFirst(topic.getAnnTitleSelector()).html());
 		}
 		announcement.setTopic(topic);
-		if (StringUtils.isEmpty(topic.getAnnLinkSelector())) {
+		if (ObjectUtils.isEmpty(topic.getAnnLinkSelector())) {
 			announcement.setLink(htmlElement.attr("href"));
 		} else {
 			announcement.setLink(htmlElement.selectFirst(topic.getAnnLinkSelector()).attr("href"));

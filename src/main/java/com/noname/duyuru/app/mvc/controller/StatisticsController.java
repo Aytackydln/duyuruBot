@@ -3,7 +3,7 @@ package com.noname.duyuru.app.mvc.controller;
 import com.noname.duyuru.app.jpa.models.User;
 import com.noname.duyuru.app.jpa.repositories.MessageRepository;
 import com.noname.duyuru.app.service.AnnouncementService;
-import com.noname.duyuru.app.service.SubscriptionService;
+import com.noname.duyuru.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,19 +18,19 @@ import org.springframework.web.servlet.ModelAndView;
 public class StatisticsController {
 	private final MessageRepository messageRepository;
 	private final AnnouncementService announcementService;
-	private final SubscriptionService subscriptionService;
+	private final UserService userService;
 
 	@GetMapping("/messages")
 	public ModelAndView messages(final @PageableDefault(sort = "time", direction = Sort.Direction.DESC, size = 13) Pageable pageable) {
-		final ModelAndView mv = new ModelAndView("messages");
+		var mv = new ModelAndView("messages");
 		mv.addObject("messagePage", messageRepository.findAll(pageable));
 		return mv;
 	}
 
 	@GetMapping("/subscriptions")
 	public ModelAndView subscriptions(final @PageableDefault(size = 9) Pageable pageable) {
-		final ModelAndView mv = new ModelAndView("subscriptions");
-		Page<User> list = subscriptionService.getUsersWithSubscriptions(pageable);
+		var mv = new ModelAndView("subscriptions");
+		Page<User> list = userService.getUsersWithSubscriptions(pageable);
 		mv.addObject("usersPage", list);
 		return mv;
 	}
@@ -42,7 +42,7 @@ public class StatisticsController {
 
 	@GetMapping("/announcements")
 	public ModelAndView announcements(final @PageableDefault(sort = "date", direction = Sort.Direction.DESC) Pageable page) {
-		final ModelAndView mv = new ModelAndView("announcements");
+		var mv = new ModelAndView("announcements");
 		mv.addObject("announcementList", announcementService.getAnnouncements(page));
 		return mv;
 	}

@@ -1,31 +1,31 @@
 package com.noname.duyuru.app.mvc.message;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Component
 public class MessageBox {
-	private final Collection<IViewMessage> messages = new ArrayDeque<>(16);
+	private final Collection<ViewMessage> messages = new ArrayDeque<>(16);
 
-	public List<IViewMessage> getMessages() {
-		List<IViewMessage> contents = new ArrayList<>(messages);
+	public List<ViewMessage> getMessages() {
+		List<ViewMessage> contents = new ArrayList<>(messages);
 		messages.clear();
 		return contents;
 	}
 
-	public void add(IViewMessage message) {
+	public void add(ViewMessage message) {
 		messages.add(message);
 	}
 
-	public void addAll(Collection<IViewMessage> messages) {
+	public void addAll(Collection<ViewMessage> messages) {
 		this.messages.addAll(messages);
 	}
 

@@ -13,7 +13,7 @@ public class ConfigurationService {
 	private final ConfigurationRepository configurationRepository;
 
 	public void set(String property, String value) {
-        final Configuration newConfiguration = new Configuration();
+        var newConfiguration = new Configuration();
         newConfiguration.setProperty(property);
         newConfiguration.setValue(value);
         LOGGER.info("Setting {} to: {}", property, value);

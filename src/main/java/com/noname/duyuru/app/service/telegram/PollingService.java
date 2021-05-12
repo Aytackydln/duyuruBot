@@ -5,8 +5,8 @@ import com.noname.duyuru.app.jpa.models.User;
 import com.noname.duyuru.app.json.models.Update;
 import com.noname.duyuru.app.json.models.Updates;
 import com.noname.duyuru.app.mvc.message.DangerMessage;
-import com.noname.duyuru.app.mvc.message.IViewMessage;
 import com.noname.duyuru.app.mvc.message.SuccessMessage;
+import com.noname.duyuru.app.mvc.message.ViewMessage;
 import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
 import com.noname.duyuru.app.setting.ConfigurationSet;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class PollingService implements DisposableBean {
 		@Override
 		public void run() {
 			try {
-				boolean noConnection = true;
+				var noConnection = true;
 				while (true) {
 					checkInterrupt();
 					try {
@@ -137,7 +137,7 @@ public class PollingService implements DisposableBean {
 	}
 
 	public String deleteWebhook() throws InterruptedException {
-		final HttpHeaders headers = new HttpHeaders();
+		var headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
 		final HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(null, headers);
@@ -147,7 +147,7 @@ public class PollingService implements DisposableBean {
 
 			configurationSet.setWebhookToken("");
 			configurationSet.setWebhookEnabled(false);
-			if (pollingThread!=null&&!pollingThread.isAlive()) {
+			if (pollingThread != null && !pollingThread.isAlive()) {
 				startPolling();
 			}
 
@@ -163,17 +163,17 @@ public class PollingService implements DisposableBean {
 		}
 	}
 
-	public IViewMessage createWebhook() {
-		final String randomChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		final StringBuilder randomString = new StringBuilder();
-		final int TOKEN_LENGTH = 12;
-		for (int i = 0; i < TOKEN_LENGTH; i++) {
+	public ViewMessage createWebhook() {
+		var randomChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		var randomString = new StringBuilder();
+		var tokenLength = 12;
+		for (var i = 0; i < tokenLength; i++) {
 			randomString.append(randomChars.charAt(random.nextInt(randomChars.length())));
 		}
 		String url = configurationSet.getWebhookUrl() + "webhook/" + randomString.toString();
 
 		LOGGER.info("setting webhook on: " + url);
-		final HttpHeaders headers = new HttpHeaders();
+		var headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
 		final MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();

@@ -3,7 +3,7 @@ package com.noname.duyuru.app.mvc.message;
 import lombok.Value;
 
 @Value
-public class DangerMessage implements IViewMessage {
+public class DangerMessage implements ViewMessage {
 	String message;
 
 	@Override

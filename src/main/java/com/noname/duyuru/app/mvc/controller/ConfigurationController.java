@@ -14,15 +14,20 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.web.servlet.view.UrlBasedViewResolver.REDIRECT_URL_PREFIX;
+
 @Controller
 @RequiredArgsConstructor
 public class ConfigurationController {
+	public static final String HOME_URL = "/";
+	public static final String CONFIGURATION_URL = "/configuration";
+
 	private final ConfigurationSet configurationSet;
 	private final ConfigurationService configurationService;
 	private final PollingService pollingService;
 	private final MessageBox messageBox;
 
-	@GetMapping("/")
+	@GetMapping(HOME_URL)
 	public ModelAndView index(VersionKeeper versionKeeper) {
 		var mv = new ModelAndView("index");
 		mv.addObject("configuration", configurationSet);
@@ -30,23 +35,23 @@ public class ConfigurationController {
 		return mv;
 	}
 
-	@GetMapping("/configuration")
+	@GetMapping(CONFIGURATION_URL)
 	public ModelAndView configuration() {
-		ModelAndView mv = new ModelAndView("configuration");
+		var mv = new ModelAndView("configuration");
 		mv.addObject("configuration", configurationSet);
 		return mv;
 	}
 
-	@PostMapping("/configuration")
+	@PostMapping(CONFIGURATION_URL)
 	public String configure(final String botToken, final String masterChatId,
 							final String defaultLanguage, final String webhookUrl,
 							final String configurationType, final String certificate,
-							final String webhookToken, final String announcementCleaning){
-		List<String> updated=new ArrayList<>();
-		List<String> needsRestart=new ArrayList<>();
+							final String webhookToken, final String announcementCleaning) {
+		List<String> updated = new ArrayList<>();
+		List<String> needsRestart = new ArrayList<>();
 
-		final boolean performant=configurationSet.getType().equals("performant");
-		if(!botToken.equals("")){
+		final boolean performant = configurationSet.getType().equals("performant");
+		if (!botToken.equals("")) {
 			configurationService.set("botToken", botToken);
 			needsRestart.add("botToken");
 		}
@@ -83,50 +88,47 @@ public class ConfigurationController {
 			configurationSet.setWebhookToken(webhookToken);
 			updated.add("webhookToken");
 		}
-		if(!announcementCleaning.equals("")){
-			switch(announcementCleaning){
-				case "true":
-					configurationSet.setCleaningEnabled(true);
-					break;
-				case "false":
-					configurationSet.setCleaningEnabled(false);
-					break;
+		if(!announcementCleaning.equals("")) {
+			if ("true".equals(announcementCleaning)) {
+				configurationSet.setCleaningEnabled(true);
+			} else if ("false".equals(announcementCleaning)) {
+				configurationSet.setCleaningEnabled(false);
 			}
 			updated.add("announcementCleaning");
 		}
 
-		if(!updated.isEmpty()){
+		if (!updated.isEmpty()) {
 			configurationSet.reload();
-			messageBox.addSuccess(String.join(", ", updated)+" have been reloaded");
+			messageBox.addSuccess(String.join(", ", updated) + " have been reloaded");
 		}
-		if(!needsRestart.isEmpty()){
-			messageBox.addInfo(String.join(", ", needsRestart)+" will be updated on restart because using performant configuration");
+		if (!needsRestart.isEmpty()) {
+			messageBox.addInfo(String.join(", ", needsRestart) + " will be updated on restart because using performant configuration");
 		}
 
-		return "redirect:/configuration";
+		return REDIRECT_URL_PREFIX + CONFIGURATION_URL;
 	}
 
 	@GetMapping("/disableAnnouncements")
 	public String disableAnnouncements() {
 		configurationSet.disableAnnouncementCheck();
-		return "redirect:/";
+		return REDIRECT_URL_PREFIX + HOME_URL;
 	}
 
 	@GetMapping("/enableAnnouncements")
 	public String enableAnnouncements() {
 		configurationSet.enableAnnouncementCheck();
-		return "redirect:/";
+		return REDIRECT_URL_PREFIX + HOME_URL;
 	}
 
 	@GetMapping("deleteWebhook")
 	public final String deleteWebhook() throws InterruptedException {
 		pollingService.deleteWebhook();
-		return "redirect:/";
+		return REDIRECT_URL_PREFIX + HOME_URL;
 	}
 
 	@GetMapping("setWebhook")
 	public final String setWebhook() {
 		messageBox.add(pollingService.createWebhook());
-		return "redirect:/";
+		return REDIRECT_URL_PREFIX + HOME_URL;
 	}
 }

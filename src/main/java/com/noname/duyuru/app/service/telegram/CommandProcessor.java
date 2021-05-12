@@ -1,6 +1,5 @@
 package com.noname.duyuru.app.service.telegram;
 
-import com.noname.duyuru.app.jpa.models.Message;
 import com.noname.duyuru.app.jpa.models.Subscription;
 import com.noname.duyuru.app.jpa.models.Topic;
 import com.noname.duyuru.app.jpa.models.User;
@@ -41,66 +40,71 @@ public class CommandProcessor {
 	private final CustomKeyboard userKeyboard;
 
 	public TelegramResponse processUpdate(final Update update) {
-		final Message message;
-		final User user;
-		if (update.getMessage() == null) {//means this is a callback
-			final CallbackQuery callbackQuery = update.getCallbackQuery();
-
-			message = callbackQuery.getMessage();
-			user = callbackQuery.getFrom();
-
-			final String data = callbackQuery.getData();
-			message.setText(data);
-			message.setUser(user);
-			try {
-				messageRepository.save(message);
-			} catch (DataIntegrityViolationException e) {
-				return new SendMessage(user.getId(), translate(user, "REQUEST_ERROR"));
-			}
-
-			//check cancel button
-			if (data.equals(CANCEL_STRING)) {
-				telegramService.deleteMessage(user, message.getMessageId());
-				return listSubscriptions(user);
-			}
-
-			//process callback
-			final String[] commandAndParameter = data.split(COMMAND_SEPARATOR);
-			final String command = commandAndParameter[0];
-			final String parameter = commandAndParameter[1];
-			switch (command) {
-				case SUBSCRIBE_KEYWORD:
-					return new UpdateMessage(message.getMessageId(), subscribe(callbackQuery, parameter));
-				case UNSUBSCRIBE_KEYWORD:
-					return new UpdateMessage(message.getMessageId(), unsubscribe(callbackQuery, parameter));
-				default:
-					LOGGER.error("unknown operation {}", command);
-					return new UpdateMessage(message.getMessageId(),
-							new SendMessage(user.getId(), translate(user, "REQUEST_ERROR") + "(unknown operation)"));
-			}
+		if (update.getMessage() == null) {
+			return processCallback(update);
 		} else {
-			message = update.getMessage();
+			return processMessage(update);
+		}
+	}
 
-			//TODO control timeout here
+	private SendMessage processMessage(Update update) {
+		var message = update.getMessage();
 
-			final String text = message.getText();
-			if (text == null) return null;
+		//TODO control timeout (if the message is too old)
 
-			messageRepository.save(message);
-			telegramService.deleteMessage(message.getUser(), message.getMessageId());
+		final String text = message.getText();
+		if (text == null) return null;
 
-			switch (text) {
-				case "/list":
-					return listSubscriptions(message.getUser());
-				case "/subscribe":
-					return listTopicsToSubscribe(message.getUser());
-				case "/unsubscribe":
-					return listTopicsToUnsubscribe(message.getUser());
-				case "/start":
-					return introduce(message.getUser());
+		messageRepository.save(message);
+		telegramService.deleteMessage(message.getUser(), message.getMessageId());
+
+		switch (text) {
+			case "/list":
+				return listSubscriptions(message.getUser());
+			case "/subscribe":
+				return listTopicsToSubscribe(message.getUser());
+			case "/unsubscribe":
+				return listTopicsToUnsubscribe(message.getUser());
+			case "/start":
+				return introduce(message.getUser());
 			default:
 				return null;
-			}
+		}
+	}
+
+	private TelegramResponse processCallback(Update update) {
+		var callbackQuery = update.getCallbackQuery();
+		var message = callbackQuery.getMessage();
+		var user = callbackQuery.getFrom();
+
+		final String data = callbackQuery.getData();
+		message.setText(data);
+		message.setUser(user);
+		try {
+			messageRepository.save(message);
+		} catch (DataIntegrityViolationException e) {
+			return new SendMessage(user.getId(), translate(user, "REQUEST_ERROR"));
+		}
+
+		//check cancel button
+		if (data.equals(CANCEL_STRING)) {
+			telegramService.deleteMessage(user, message.getMessageId());
+			return listSubscriptions(user);
+		}
+
+		//process callback
+		final String[] commandAndParameter = data.split(COMMAND_SEPARATOR);
+		final String command = commandAndParameter[0];
+		final String parameter = commandAndParameter[1];
+		switch (command) {
+			case SUBSCRIBE_KEYWORD:
+				return new UpdateMessage(message.getMessageId(), subscribe(callbackQuery, parameter));
+			case UNSUBSCRIBE_KEYWORD:
+				return new UpdateMessage(message.getMessageId(), unsubscribe(callbackQuery, parameter));
+			default:
+				LOGGER.error("unknown operation {}", command);
+				return new UpdateMessage(message.getMessageId(),
+						new SendMessage(user.getId(), translate(user, "REQUEST_ERROR") + "(unknown operation)"));
 		}
 	}
 
@@ -114,58 +118,58 @@ public class CommandProcessor {
 		listSubscriptions(user);
 
 		telegramService.sendMessageToMaster("Yeni katılan: " + user.getFullName() + ", " + user.getUsername());
-		final SendMessage welcome = new SendMessage(user.getId(), translate(user, "WELCOME"));
+		var welcome = new SendMessage(user.getId(), translate(user, "WELCOME"));
 		welcome.keyboard(userKeyboard);
 		return welcome;
 	}
 
 	private SendMessage listSubscriptions(final User user) {
-		final List<Topic> subscriptionList = subscriptionRepository.findUserTopics(user);
+		var subscriptionList = subscriptionRepository.findUserTopics(user);
 		if (subscriptionList.isEmpty()) {
 			return new SendMessage(user.getId(), translate(user, "SUBSCRIPTIONS_EMPTY"));
 		} else {
-			StringBuilder response = new StringBuilder(translate(user, "SUBSCRIBED_LIST_HEADER") + "\n");
+			var response = new StringBuilder(translate(user, "SUBSCRIBED_LIST_HEADER") + "\n");
 			for (Topic t : subscriptionList) {
 				response.append(t.getId()).append("\n");
 			}
 
-			SendMessage sendMessage = new SendMessage(user.getId(), response.toString());
+			var sendMessage = new SendMessage(user.getId(), response.toString());
 			sendMessage.keyboard(userKeyboard);
 			return sendMessage;
 		}
 	}
 
 	private SendMessage listTopicsToSubscribe(final User user) {
-		final List<Topic> subscriptionList = subscriptionRepository.findUserTopics(user);
-		final List<Topic> allTopics = topicRepository.findAll();
+		var subscriptionList = subscriptionRepository.findUserTopics(user);
+		var allTopics = topicRepository.findAll();
 
 		allTopics.removeAll(subscriptionList);
 
-		final InlineKeyboard inlineKeyboard = new InlineKeyboard();
-		inlineKeyboard.addRow().add(new KeyboardItem(CANCEL_TEXT, CANCEL_STRING));
-		for (Topic topic : allTopics) {
-			inlineKeyboard.addRow().add(new KeyboardItem(topic.getId(), SUBSCRIBE_KEYWORD + COMMAND_SEPARATOR + topic.getId()));
-		}
-		inlineKeyboard.addRow().add(new KeyboardItem(CANCEL_TEXT, CANCEL_STRING));
+		var inlineKeyboard = createTopicKeyboard(allTopics, SUBSCRIBE_KEYWORD);
 
 		return new SendMessage(user.getId(), translate(user, "SUBSCRIBE_LIST_HEADER")).keyboard(inlineKeyboard);
 	}
 
-	private SendMessage listTopicsToUnsubscribe(final User user) {
-		final List<Topic> subscriptionList = subscriptionRepository.findUserTopics(user);
-
-		final InlineKeyboard inlineKeyboard = new InlineKeyboard();
+	private Keyboard createTopicKeyboard(List<Topic> allTopics, String subscribeKeyword) {
+		var inlineKeyboard = new InlineKeyboard();
 		inlineKeyboard.addRow().add(new KeyboardItem(CANCEL_TEXT, CANCEL_STRING));
-		for (Topic topic : subscriptionList) {
-			inlineKeyboard.addRow().add(new KeyboardItem(topic.getId(), UNSUBSCRIBE_KEYWORD + COMMAND_SEPARATOR + topic.getId()));
+		for (Topic topic : allTopics) {
+			inlineKeyboard.addRow().add(new KeyboardItem(topic.getId(), subscribeKeyword + COMMAND_SEPARATOR + topic.getId()));
 		}
 		inlineKeyboard.addRow().add(new KeyboardItem(CANCEL_TEXT, CANCEL_STRING));
+		return inlineKeyboard;
+	}
+
+	private SendMessage listTopicsToUnsubscribe(final User user) {
+		var subscriptionList = subscriptionRepository.findUserTopics(user);
+
+		var inlineKeyboard = createTopicKeyboard(subscriptionList, UNSUBSCRIBE_KEYWORD);
 
 		return new SendMessage(user.getId(), translate(user, "UNSUBSCRIBE_LIST_HEADER")).keyboard(inlineKeyboard);
 	}
 
 	private SendMessage subscribe(final CallbackQuery query, final String topic) {
-		final User user = query.getFrom();
+		var user = query.getFrom();
 
 		try {
 			subscribe(user, topic);
@@ -197,12 +201,11 @@ public class CommandProcessor {
 	}
 
 	private SendMessage unsubscribe(final CallbackQuery query, final String topic) {
-		final User user = query.getFrom();
-
-		final Subscription subscription = new Subscription();
+		var user = query.getFrom();
+		var subscription = new Subscription();
 		subscription.setUser(user);
 
-		final Topic topicObj = new Topic();
+		var topicObj = new Topic();
 		topicObj.setId(topic);
 		subscription.setTopic(topicObj);
 

@@ -4,8 +4,8 @@ import com.noname.duyuru.app.jpa.models.Department;
 import com.noname.duyuru.app.jpa.models.Topic;
 import com.noname.duyuru.app.jpa.repositories.DepartmentRepository;
 import com.noname.duyuru.app.jpa.repositories.TopicRepository;
-import com.noname.duyuru.app.mvc.message.IViewMessage;
 import com.noname.duyuru.app.mvc.message.SuccessMessage;
+import com.noname.duyuru.app.mvc.message.ViewMessage;
 import com.noname.duyuru.app.service.telegram.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,8 +29,8 @@ public class TopicUpdater {
 	private final DepartmentRepository departmentRepository;
 	private final TelegramService telegramService;
 
-	public Collection<IViewMessage> updateTopics() {
-		final List<IViewMessage> result = new ArrayList<>();
+	public Collection<ViewMessage> updateTopics() {
+		final List<ViewMessage> result = new ArrayList<>();
 		final Iterable<Department> departments = departmentRepository.findAll();
 		for (final Department d : departments)
 			result.add(new SuccessMessage(d.getId() + ": " + checkDepartmentClasses(d)));

@@ -17,6 +17,12 @@ import java.util.List;
 @ToString(onlyExplicitlyIncluded = true)
 @Setter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@NamedEntityGraph(
+        name = "user-subscriptions",
+        attributeNodes = {
+                @NamedAttributeNode("subscriptions")
+        }
+)
 public class User implements Serializable {
     private long id;
     private String firstName;
