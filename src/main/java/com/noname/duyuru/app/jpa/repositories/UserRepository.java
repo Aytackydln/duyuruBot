@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
 
-    @Query(value = "select u from User u join fetch u.subscriptions where u.subscriptions.size > 0",
-            countQuery = "select count(u) from User u where u.subscriptions.size > 0")
+    @Query(value = "select u from User u join fetch u.subscriptions where size(u.subscriptions) > 0",
+            countQuery = "select count(u) from User u where size(u.subscriptions) > 0")
     Page<User> getUsersWithSubscriptions(Pageable pageable);
 }
