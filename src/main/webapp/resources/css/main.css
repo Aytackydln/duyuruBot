@@ -92,3 +92,13 @@ table, .alert {
 	padding-bottom: 0.5rem;
 	min-width: 15rem;
 }
+
+/* hide accesiblity elements */
+table > caption {
+	visibility: hidden;
+	display: none;
+	width: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+}

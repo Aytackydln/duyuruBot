@@ -5,9 +5,19 @@
     <jsp:attribute name="title">Subscriptions</jsp:attribute>
     <jsp:body>
         <table class="table table-striped table-bordered">
+            <caption>Users and subscriptions</caption>
+            <tr>
+                <th scope="col">User</th>
+                <th scope="col">Subscriptions</th>
+            </tr>
             <c:forEach items="${usersPage.content}" var="user">
                 <tr>
-                    <td>${user.fullName}, ${user.username} - ${user.language}</td>
+                    <td <c:if test="${user.status != null}"> class="text-muted" </c:if>>
+                            ${user.fullName}, ${user.username} - ${user.language}
+                        <c:if test="${user.status != null}">
+                            , ${user.status}
+                        </c:if>
+                    </td>
                     <td>
                         <a data-toggle="collapse" href="#a${user.id}">${user.subscriptions.size()} subscriptions</a>
                     </td>

@@ -9,17 +9,21 @@ import lombok.Data;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @Data
-public class Update{
-	private int updateId;
-	private Message message;
-	private CallbackQuery callbackQuery;
+public class Update {
+    private int updateId;
+    private Message message;
+    private CallbackQuery callbackQuery;
+    private ChatDetails myChatMember;
 
-	@JsonIgnore
-	public User getUser(){
-		if (message!=null){
-			return message.getUser();
-		}else {
-			return callbackQuery.getFrom();
-		}
-	}
+    @JsonIgnore
+    public User getUser() {
+        if (message != null) {
+            return message.getUser();
+        } else if (callbackQuery != null) {
+            return callbackQuery.getFrom();
+        } else if (myChatMember != null) {
+            return myChatMember.getChat();
+        }
+        throw new IllegalArgumentException("User could not be found from update");
+    }
 }

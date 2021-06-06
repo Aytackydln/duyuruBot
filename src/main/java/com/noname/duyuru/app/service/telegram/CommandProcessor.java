@@ -10,10 +10,13 @@ import com.noname.duyuru.app.json.models.*;
 import com.noname.duyuru.app.json.telegram.response.SendMessage;
 import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
 import com.noname.duyuru.app.json.telegram.response.UpdateMessage;
+import com.noname.duyuru.app.service.UserService;
 import com.noname.duyuru.app.service.dictionary.DictionaryKeeper;
+import com.noname.duyuru.app.setting.ConfigurationSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
@@ -35,16 +38,55 @@ public class CommandProcessor {
 	private final TopicRepository topicRepository;
 	private final MessageRepository messageRepository;
 	private final TelegramService telegramService;
+	private final UserService userService;
 	private final DictionaryKeeper dictionaryKeeper;
+	private final ConfigurationSet configurationSet;
 
 	private final CustomKeyboard userKeyboard;
 
+	@Nullable
 	public TelegramResponse processUpdate(final Update update) {
-		if (update.getMessage() == null) {
-			return processCallback(update);
-		} else {
+		if (update.getMyChatMember() != null) {
+			processMemberChange(update);
+			return null;
+		} else if (update.getMessage() != null) {
 			return processMessage(update);
+		} else if (update.getCallbackQuery() != null) {
+			return processCallback(update);
 		}
+
+		throw new UnsupportedOperationException("Unknown update");
+	}
+
+	@Nullable
+	private void processMemberChange(Update update) {
+		var chatDetails = update.getMyChatMember();
+		var chatMember = chatDetails.getNewChatMember();
+		String newMemberStatus = chatMember.getStatus();
+		long newMemberId = chatMember.getUser().getId();
+
+		if (configurationSet.getBotId() == newMemberId) {
+			switch (newMemberStatus) {
+				case "member":
+					userUnblockedBot(update);
+					break;
+				case "kicked":
+					userBlockedBot(update);
+					break;
+				default:
+					throw new IllegalStateException("Unknown member state");
+			}
+		}
+	}
+
+	private void userBlockedBot(Update update) {
+		var user = update.getUser();
+		userService.setUserStatusDisabled(user.getId());
+	}
+
+	private void userUnblockedBot(Update update) {
+		var user = update.getUser();
+		userService.clearUserStatus(user.getId());
 	}
 
 	private SendMessage processMessage(Update update) {
@@ -188,10 +230,10 @@ public class CommandProcessor {
 		}
 	}
 
-	private void subscribe(final User user, final String topic){
-		final Subscription subscription = new Subscription();
+	private void subscribe(final User user, final String topic) {
+		final var subscription = new Subscription();
 
-		final Topic topicObj = new Topic();
+		final var topicObj = new Topic();
 		topicObj.setId(topic);
 
 		subscription.setUser(user);

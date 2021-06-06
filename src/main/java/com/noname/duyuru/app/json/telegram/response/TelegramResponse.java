@@ -1,14 +1,17 @@
 package com.noname.duyuru.app.json.telegram.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.noname.duyuru.app.component.ServiceContext;
+import org.springframework.lang.Nullable;
 
 public interface TelegramResponse {
-	String getMethod();
+    String getMethod();
 
-	@JsonIgnore
-	boolean isLimited();
+    @JsonIgnore
+    boolean isLimited();
 
-	TelegramResponse onError(Exception e);
+    @Nullable
+    TelegramResponse onError(Exception e, ServiceContext serviceContext);
 
-	void preSend();
+    void preSend();
 }

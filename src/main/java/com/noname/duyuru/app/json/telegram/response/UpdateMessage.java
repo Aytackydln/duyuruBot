@@ -3,6 +3,7 @@ package com.noname.duyuru.app.json.telegram.response;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.noname.duyuru.app.component.ServiceContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -22,7 +23,7 @@ public class UpdateMessage implements TelegramResponse {
     }
 
     @Override
-    public String getMethod() {
+    public final String getMethod() {
         return "editMessageText";
     }
 
@@ -32,7 +33,7 @@ public class UpdateMessage implements TelegramResponse {
     }
 
     @Override
-    public TelegramResponse onError(Exception e) {
+    public TelegramResponse onError(Exception e, ServiceContext serviceContext) {
         return null;
     }
 

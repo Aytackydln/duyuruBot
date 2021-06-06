@@ -22,10 +22,19 @@ public class Subscription implements Serializable {
         return id;
     }
 
+
     @Id
     @ManyToOne(cascade = {CascadeType.MERGE}, optional = false)
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        if (user != null)
+            this.id.setUser(user.getId());
+        else
+            this.id.setUser(0);
     }
 
     @Id
@@ -34,8 +43,17 @@ public class Subscription implements Serializable {
         return topic;
     }
 
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+        if (topic != null)
+            this.id.setTopic(topic.getId());
+        else
+            this.id.setTopic(null);
+    }
+
     @Data
     @Setter(AccessLevel.PRIVATE)
+    @EqualsAndHashCode
     public static class Key implements Serializable {
         private long user;
         private String topic;

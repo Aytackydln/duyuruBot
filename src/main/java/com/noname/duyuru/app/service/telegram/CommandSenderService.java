@@ -1,5 +1,6 @@
 package com.noname.duyuru.app.service.telegram;
 
+import com.noname.duyuru.app.component.ServiceContext;
 import com.noname.duyuru.app.configuration.TelegramClientConfig;
 import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class CommandSenderService {
 
     private final RestTemplate telegramClient;
     private final CommandObserverService commandObserverService;
+    private final ServiceContext serviceContext;
 
     @Async(TelegramClientConfig.LIMITED_COMMAND_SENDER)
     void sendLimitedResponse(TelegramResponse responseToSend) {
@@ -38,9 +40,9 @@ public class CommandSenderService {
 
         final HttpEntity<TelegramResponse> request = new HttpEntity<>(responseToSend, headers);
         try {
-            telegramClient.postForEntity("/" + responseToSend.getMethod(), request, String.class);
+            telegramClient.postForLocation("/" + responseToSend.getMethod(), request);
         } catch (Exception e) {
-            TelegramResponse errorResponse = responseToSend.onError(e);
+            TelegramResponse errorResponse = responseToSend.onError(e, serviceContext);
             if (errorResponse != null)
                 commandObserverService.addCommand(errorResponse);
         }

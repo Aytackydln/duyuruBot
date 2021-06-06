@@ -38,7 +38,7 @@ public class Message {
         return messageId;
     }
 
-    @ManyToOne(cascade = CascadeType.MERGE, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
     @JsonProperty("from")
     @ToString.Include
     public User getUser() {

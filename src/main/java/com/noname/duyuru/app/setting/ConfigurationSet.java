@@ -2,17 +2,27 @@ package com.noname.duyuru.app.setting;
 
 import com.noname.duyuru.app.jpa.models.User;
 
-public interface ConfigurationSet{
+public interface ConfigurationSet {
 	void reload();
 
 	int getThreads();
 
 	boolean isAnnouncementCheckEnabled();
+
+	long getBotId();
+
+	String getBotPassword();
+
 	String getBotToken();
+
 	long getMasterChatId();
+
 	User getMaster();
+
 	String getDefaultLanguage();
+
 	void enableAnnouncementCheck();
+
 	void disableAnnouncementCheck();
 
 	String getType();

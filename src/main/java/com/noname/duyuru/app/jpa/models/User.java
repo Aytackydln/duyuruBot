@@ -70,11 +70,12 @@ public class User implements Serializable {
         return language;
     }
 
+    @ToString.Include
     public String getStatus() {
         return status;
     }
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }

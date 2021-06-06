@@ -7,6 +7,7 @@ import com.noname.duyuru.app.json.telegram.response.TelegramResponse;
 import com.noname.duyuru.app.setting.ConfigurationSet;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,11 +26,13 @@ public class TelegramService implements DisposableBean {
         sendMessageToMaster("I have woken up, master");
     }
 
-    void sendCommand(TelegramResponse response) {
-        if (response.isLimited()) {
-            commandSenderService.sendLimitedResponse(response);
-        } else {
-            commandSenderService.submitResponseAsync(response);
+    void sendCommand(@Nullable TelegramResponse response) {
+        if (response != null) {
+            if (response.isLimited()) {
+                commandSenderService.sendLimitedResponse(response);
+            } else {
+                commandSenderService.submitResponseAsync(response);
+            }
         }
     }
 

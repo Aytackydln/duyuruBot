@@ -77,6 +77,7 @@ public class Announcement implements Serializable {
 
     @Data
     @Setter(AccessLevel.PRIVATE)
+    @EqualsAndHashCode
     public static class Key implements Serializable {
         private String topic;
         private String title;
