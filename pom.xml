@@ -15,7 +15,7 @@
 
     <properties>
         <hibernate.version>5.4.2.Final</hibernate.version>
-        <jsoup.version>1.12.1</jsoup.version>
+        <jsoup.version>1.14.2</jsoup.version>
     </properties>
 
 	<build>
