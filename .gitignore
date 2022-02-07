@@ -1,20 +1,97 @@
+# git-ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+# Some content is used from https://github.com/github/gitignore
 
-# Eclipse
-.classpath
-.project
-.settings/
+# VI generated files
+.*.sw[a-z]
+*.un~
+Session.vim
 
-# Intellij
-.idea/
+# IntelliJ Idea generated files
 *.iml
+*.ipr
 *.iws
+.idea
+.subsplit
+*plugin.xml
 
-# Mac
-.DS_Store
+# NetBeans generated files
+nb-configuration.xml
 
-# Maven
-log/
-target/
-lib/
+# Eclipse generated files
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*~.nib
+.classpath
+.settings/
+.loadpath
+.git/
+build/
 
+# Project generated files
+*.class
+*.log
+*.patch
+*.war
+*.ear
+*.ser
 logs/
+generated/
+
+# Compression generated files
+*.zip
+*.gz
+*.tar
+*.rar
+*.7z
+
+# Maven generated files
+*.releaseBackup
+release.properties
+pom.xml.versionsBackup
+target/
+
+# Gradle generated files
+.gradle/
+gradlew.bat
+
+# OS generated files
+*.pid
+*.swp
+*.tmp
+*.old
+*.backup
+*.diff
+
+# Windows generated files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux generated files
+*~
+.directory
+
+# SVN generated files
+.svn
+log.txt
+
+*.DS_Store
+out/
+.splitter/
+.env
+
+node_modules/
+
+__pycache__/
+lib/glowroot/data/
+lib/glowroot/tmp/
+lib/glowroot/agent**
+lib/newrelic/logs/
+*.pyc
+*.db
+lib/

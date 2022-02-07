@@ -14,7 +14,7 @@ Pretty much required to understand some fundamental things in this project.
 ## Properties needed to boot
 ```properties
 spring.datasource.url=(insert your db connection url)
-spring.datasource.username=(insert your db user)
+spring.datasource.username=(insert your db userEntity)
 spring.datasource.password=(insert your db password)
 ```
 Contact the maintainer for details if you need to.
@@ -27,5 +27,5 @@ server.error.include-stacktrace=always
 logging.level.root=INFO
 logging.level.org.springframework.web=INFO
 logging.level.org.hibernate=INFO
-logging.level.com.noname.duyuru=DEBUG
+logging.level.aytackydln.duyuru=DEBUG
 ```

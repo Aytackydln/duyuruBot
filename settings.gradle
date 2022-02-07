@@ -1,0 +1,19 @@
+pluginManagement {
+    repositories {
+        maven { url 'https://repo.spring.io/release' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'org.hibernate.orm') {
+                useModule('org.hibernate:hibernate-gradle-plugin:5.4.32.Final')
+            }
+        }
+    }
+}
+
+rootProject.name = 'duyuruBot'
+
+include 'chattools'
+include 'duyuru'
