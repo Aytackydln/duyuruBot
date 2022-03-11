@@ -1,5 +1,6 @@
 plugins {
     id 'groovy-gradle-plugin'
+    id "org.sonarqube" version "3.3"
 }
 
 repositories {
@@ -10,3 +11,5 @@ repositories {
 build {
     dependsOn 'chattools:build', 'duyuru:build'
 }
+
+apply from: "$rootProject.projectDir/gradle/config/sonar.gradle"

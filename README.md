@@ -1,3 +1,19 @@
+# TODO
+
+- [ ] Transform into hexagonal architecture  
+  - [X] Seperate chat classes into another library
+  - [ ] Use interfaces for chat classes
+  - [X] Switch to gradle
+  - [X] Seperate into domain and infra in a "working" state.
+  - [ ] Refactor for design patterns and best practices, namings
+- [ ] Add more chat platforms
+  - [X] Seperate chat classes into another library
+  - [ ] Use the interfaces for chat classes
+  - [ ] Add Discord support
+  - [ ] Add Slack support
+- [ ] Switch from JSP frontend to React
+- [ ] Migrate to scala?
+
 * A database stub created from Mysql8 server is included in src/main/schema (outdated right now)
 * Create duyuru.properties or another with a profile name according to your setup. See 
 [Properties needed to boot](#properties-needed-to-boot) for details.
@@ -14,7 +30,7 @@ Pretty much required to understand some fundamental things in this project.
 ## Properties needed to boot
 ```properties
 spring.datasource.url=(insert your db connection url)
-spring.datasource.username=(insert your db userEntity)
+spring.datasource.username=(insert your db user)
 spring.datasource.password=(insert your db password)
 ```
 Contact the maintainer for details if you need to.
