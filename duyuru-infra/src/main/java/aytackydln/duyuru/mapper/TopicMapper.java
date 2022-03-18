@@ -2,13 +2,15 @@ package aytackydln.duyuru.mapper;
 
 import aytackydln.duyuru.jpa.entity.TopicEntity;
 import aytackydln.duyuru.mapper.conf.DuyuruMapperConfig;
+import aytackydln.duyuru.mapper.conf.LazyMappingConfig;
 import aytackydln.duyuru.topic.Topic;
 import org.mapstruct.Mapper;
 
 import java.util.List;
 
 @Mapper(
-        config = DuyuruMapperConfig.class
+        config = DuyuruMapperConfig.class,
+        uses = LazyMappingConfig.class
 )
 public interface TopicMapper {
 
