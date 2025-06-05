@@ -1,7 +1,0 @@
-sonarqube {
-    properties {
-        property "sonar.projectKey", "Aytackydln_duyuruBot"
-        property "sonar.organization", "aytackydln"
-        property "sonar.host.url", "https://sonarcloud.io"
-    }
-}
