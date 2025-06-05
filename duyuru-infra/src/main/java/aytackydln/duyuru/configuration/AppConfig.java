@@ -35,9 +35,9 @@ public class AppConfig{
 	public CustomKeyboard userKeyboard(){
 		final CustomKeyboard customKeyboard=new CustomKeyboard();
 		final List<KeyboardItem> secondRow=customKeyboard.addRow();
-		secondRow.add(new KeyboardItem("/list"));
-		secondRow.add(new KeyboardItem("/subscribe"));
-		secondRow.add(new KeyboardItem("/unsubscribe"));
+		secondRow.add(new KeyboardItem("/list", null));
+		secondRow.add(new KeyboardItem("/subscribe", null));
+		secondRow.add(new KeyboardItem("/unsubscribe", null));
 
 		return customKeyboard;
 	}

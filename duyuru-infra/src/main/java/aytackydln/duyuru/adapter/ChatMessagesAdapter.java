@@ -17,6 +17,7 @@ public class ChatMessagesAdapter implements ChatMessagePort {
     @Override
     public void update(ChatMessage chatMessage) {
         MessageEntity messageEntity = messageMapper.map(chatMessage);
+        messageEntity.getTime().toString().substring(0, 10);
         messageRepository.save(messageEntity);
     }
 }

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <t:template>
@@ -13,7 +13,7 @@
                                 ${msg.user.fullName}, ${msg.user.username}
                         </span>
                         <span class="bg-info col-md-auto col">
-                            <fmt:formatDate type="both" value="${msg.time.time}" pattern="dd MMM yyyy HH:mm:ss"/>
+                            ${msg.time.toString()}
                         </span>
                         <span class="col-md col-12">
                                 ${msg.text}

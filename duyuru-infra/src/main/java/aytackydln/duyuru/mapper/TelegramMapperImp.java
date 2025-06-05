@@ -2,6 +2,7 @@ package aytackydln.duyuru.mapper;
 
 import aytackydln.chattools.telegram.TelegramChat;
 import aytackydln.chattools.telegram.TelegramMessage;
+import aytackydln.chattools.telegram.dto.models.Chat;
 import aytackydln.chattools.telegram.dto.models.Update;
 import aytackydln.duyuru.mapper.conf.DuyuruMapperConfig;
 import aytackydln.duyuru.message.ChatMessage;
@@ -21,6 +22,16 @@ public interface TelegramMapperImp extends TelegramMapper {
     ChatMessage toMessageFromCallback(Update update);
 
     @Mapping(target = "subscriptions", ignore = true)
+    @Mapping(target = "status", ignore = true)
     Subscriber toUser(TelegramChat telegramChat);
+
+    default Chat toChat(TelegramChat telegramChat) {
+        return new Chat(
+                telegramChat.getId(),
+                telegramChat.getUsername(),
+                telegramChat.getFirstName(),
+                telegramChat.getLastName()
+        );
+    }
 }
 

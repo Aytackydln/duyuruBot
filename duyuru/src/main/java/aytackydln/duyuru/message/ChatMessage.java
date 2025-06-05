@@ -5,7 +5,7 @@ import aytackydln.duyuru.subscriber.Subscriber;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Calendar;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -13,7 +13,7 @@ public class ChatMessage {
 	private long messageId;
 	private Subscriber user;
 	private String text;
-    private Calendar time;
+    private Instant time;
 
     public Chat chat;
 }

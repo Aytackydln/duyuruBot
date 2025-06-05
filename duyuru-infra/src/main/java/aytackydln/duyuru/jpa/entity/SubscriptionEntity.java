@@ -1,8 +1,8 @@
 package aytackydln.duyuru.jpa.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity(name = "Subscription")

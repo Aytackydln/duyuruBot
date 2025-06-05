@@ -43,7 +43,7 @@ public class PollingService implements DisposableBean {
 	private final TelegramCommandProcessor telegramCommandProcessor;
 	private final RestTemplate telegramClient;
 	private final Random random = new Random();
-	private int lastUpdate = 0;
+	private long lastUpdate = 0;
 	private Thread pollingThread;
 
 	private final Runnable runnable = new Runnable() {

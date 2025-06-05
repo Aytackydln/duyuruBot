@@ -3,30 +3,29 @@ package aytackydln.duyuru.jpa.entity;
 import aytackydln.chattools.telegram.dto.models.Chat;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.time.Instant;
 
 @Entity(name = "Message")
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 public class MessageEntity {
-	private long messageId;
+	private Long messageId;
 	private UserEntity user;
 	private String text;
-    private Calendar time;
+    private Instant time;
 
     public Chat chat;
 
     @PrePersist
     void preInsert() {
         if (time == null)
-            time = new GregorianCalendar();
+            time = Instant.now();
     }
 
     @Id
@@ -34,7 +33,7 @@ public class MessageEntity {
     @Column(name = "id")
     @JsonAlias("message_id")
     @EqualsAndHashCode.Include
-    public long getMessageId() {
+    public Long getMessageId() {
         return messageId;
     }
 
@@ -51,7 +50,7 @@ public class MessageEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    public Calendar getTime() {
+    public Instant getTime() {
         return time;
     }
 

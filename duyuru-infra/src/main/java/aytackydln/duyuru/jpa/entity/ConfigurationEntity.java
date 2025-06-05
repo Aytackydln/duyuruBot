@@ -1,10 +1,10 @@
 package aytackydln.duyuru.jpa.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity(name = "Configuration")
