@@ -10,7 +10,6 @@
 <spring:url value="https://bootswatch.com/4/darkly/bootstrap.min.css" var="bootstrapCss"/>
 <spring:url value="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap-grid.min.css"
             var="bootstrapGridCss"/>
-<spring:url value="https://code.jquery.com/jquery-3.4.1.slim.min.js" var="jquery"/>
 <spring:url value="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" var="bootstrapJs"/>
 <spring:url value="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" var="popperJs"/>
 <!doctype html>
@@ -63,7 +62,6 @@
         <jsp:doBody/>
     </div>
 </div>
-<script src="${jquery}"></script>
 <script src="${bootstrapJs}"></script>
 <script src="${popperJs}"></script>
 </body>
